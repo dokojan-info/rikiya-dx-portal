@@ -3,35 +3,35 @@ import { ExternalLink } from "lucide-react";
 
 const apps = [
     {
-        id: "caljan",
-        name: "CalJan",
+        id: "jancalc",
+        name: "JANCALC",
         description: "いつでもブラウザから一瞬で条件計算ができるWebアプリ",
-        icon: <Image src="/images/caljan_icon.png" alt="CalJan" width={32} height={32} className="w-12 h-12" />,
-        url: "https://caljan-app.vercel.app/",
+        icon: <Image src="/images/jancalc_icon.png" alt="JANCALC" width={48} height={48} className="w-12 h-12" />,
+        url: "https://jancalc.rdx-mahjong.com/",
         noteUrl: "#", // 仮置き
     },
     {
         id: "janmatch",
         name: "JANMATCH",
         description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
-        icon: <Image src="/images/janmatch_icon.png" alt="JANMATCH" width={32} height={32} className="w-12 h-12" />,
-        url: "https://janmatch.vercel.app/",
+        icon: <Image src="/images/janmatch_icon.png" alt="JANMATCH" width={48} height={48} className="w-12 h-12" />,
+        url: "https://janmatch.rdx-mahjong.com/",
         noteUrl: "#", // 仮置き
     },
     {
         id: "jansco",
         name: "JANSCO",
         description: "スマートなスコア計算アプリ",
-        icon: <Image src="/images/jansco.png" alt="JANSCO" width={32} height={32} className="w-12 h-12" />,
-        url: "https://jansco.vercel.app/",
+        icon: <Image src="/images/jansco.png" alt="JANSCO" width={48} height={48} className="w-12 h-12" />,
+        url: "https://jansco.rdx-mahjong.com/",
         noteUrl: "#", // 仮置き
     },
     {
         id: "janpass",
         name: "JANPASS",
         description: "デジタル点棒アプリ",
-        icon: <Image src="/images/janpass_icon.png" alt="JANPASS" width={32} height={32} className="w-12 h-12" />,
-        url: "https://janpass.vercel.app/",
+        icon: <Image src="/images/janpass_icon.png" alt="JANPASS" width={48} height={48} className="w-12 h-12" />,
+        url: "https://janpass.rdx-mahjong.com/",
         noteUrl: "#", // 仮置き
     },
 ];
