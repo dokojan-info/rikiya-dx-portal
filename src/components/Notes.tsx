@@ -1,4 +1,5 @@
 import { Edit3, ExternalLink } from "lucide-react";
+import Image from "next/image";
 import Parser from "rss-parser";
 
 const NOTE_ACCOUNT_URL = "https://note.com/rikiya_ai";
@@ -10,6 +11,7 @@ type Article = {
     title: string;
     date: string;
     url: string;
+    thumbnail: string | null;
 };
 
 // 除外キーワード（タイトルにこれらを含む記事は表示しない）
@@ -23,7 +25,11 @@ const EXCLUDE_KEYWORDS = [
 
 async function fetchNoteArticles(): Promise<Article[]> {
     try {
-        const parser = new Parser();
+        const parser = new Parser({
+            customFields: {
+                item: [['media:thumbnail', 'thumbnail']],
+            }
+        });
         const feed = await parser.parseURL(RSS_URL);
 
         return (feed.items ?? [])
@@ -43,6 +49,7 @@ async function fetchNoteArticles(): Promise<Article[]> {
                     })
                     : "",
                 url: item.link ?? NOTE_ACCOUNT_URL,
+                thumbnail: (item as any).thumbnail || null,
             }));
     } catch (error) {
         console.error("note RSS の取得に失敗しました:", error);
@@ -82,16 +89,32 @@ export default async function Notes() {
                             href={article.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group block p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-primary/20 hover:shadow-md transition-all"
+                            className="group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all"
                         >
-                            <div className="flex items-center justify-end mb-4">
-                                <span className="text-sm text-slate-400 font-medium">{article.date}</span>
+                            <div className="relative aspect-[1.91/1] w-full overflow-hidden bg-slate-100">
+                                {article.thumbnail ? (
+                                    <Image
+                                        src={article.thumbnail}
+                                        alt={article.title}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                        <Edit3 className="w-8 h-8 opacity-20" />
+                                    </div>
+                                )}
                             </div>
-                            <h3 className="text-lg font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-3 mb-4">
-                                {article.title}
-                            </h3>
-                            <div className="flex items-center text-sm font-medium text-slate-500 group-hover:text-primary transition-colors mt-auto">
-                                記事を読む <ExternalLink className="w-4 h-4 ml-1" />
+                            <div className="p-6 flex flex-col flex-grow">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs text-slate-400 font-medium">{article.date}</span>
+                                </div>
+                                <h3 className="text-base font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2 mb-4 leading-snug">
+                                    {article.title}
+                                </h3>
+                                <div className="flex items-center text-sm font-medium text-slate-500 group-hover:text-primary transition-colors mt-auto">
+                                    記事を読む <ExternalLink className="w-4 h-4 ml-1" />
+                                </div>
                             </div>
                         </a>
                     ))}

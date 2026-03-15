@@ -1,12 +1,21 @@
 import Link from "next/link";
 import { User, Activity, Box, HeartHandshake, Coffee, Edit3 } from "lucide-react";
 
+import Image from "next/image";
+
 export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link href="/" className="text-xl font-bold tracking-tight text-primary">
-                    Mahjong RDX
+                <Link href="/" className="flex items-center">
+                    <Image
+                        src="/images/logo.png"
+                        alt="Mahjong RDX"
+                        width={120}
+                        height={32}
+                        className="h-8 w-auto object-contain"
+                        priority
+                    />
                 </Link>
                 <nav className="hidden md:flex items-center gap-6">
                     <Link href="#apps" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
