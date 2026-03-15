@@ -23,9 +23,13 @@ const EXCLUDE_KEYWORDS = [
     "着！", "人気）", "馬場", "枠",
 ];
 
+type CustomItem = Parser.Item & {
+    thumbnail?: string;
+};
+
 async function fetchNoteArticles(): Promise<Article[]> {
     try {
-        const parser = new Parser({
+        const parser: Parser<any, CustomItem> = new Parser({
             customFields: {
                 item: [['media:thumbnail', 'thumbnail']],
             }
@@ -33,12 +37,12 @@ async function fetchNoteArticles(): Promise<Article[]> {
         const feed = await parser.parseURL(RSS_URL);
 
         return (feed.items ?? [])
-            .filter((item) => {
+            .filter((item: CustomItem) => {
                 const title = item.title ?? "";
                 return !EXCLUDE_KEYWORDS.some((kw) => title.includes(kw));
             })
             .slice(0, MAX_ARTICLES)
-            .map((item, index) => ({
+            .map((item: CustomItem, index: number) => ({
                 id: String(index),
                 title: item.title ?? "無題",
                 date: item.pubDate
@@ -49,7 +53,7 @@ async function fetchNoteArticles(): Promise<Article[]> {
                     })
                     : "",
                 url: item.link ?? NOTE_ACCOUNT_URL,
-                thumbnail: (item as any).thumbnail || null,
+                thumbnail: item.thumbnail || null,
             }));
     } catch (error) {
         console.error("note RSS の取得に失敗しました:", error);
