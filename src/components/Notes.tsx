@@ -29,7 +29,8 @@ type CustomItem = Parser.Item & {
 
 async function fetchNoteArticles(): Promise<Article[]> {
     try {
-        const parser: Parser<any, CustomItem> = new Parser({
+        // 修正箇所: Parser<any, CustomItem> を Parser<Record<string, unknown>, CustomItem> に変更
+        const parser: Parser<Record<string, unknown>, CustomItem> = new Parser({
             customFields: {
                 item: [['media:thumbnail', 'thumbnail']],
             }
