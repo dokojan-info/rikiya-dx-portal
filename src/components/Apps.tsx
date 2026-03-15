@@ -8,7 +8,7 @@ const apps = [
         description: "いつでもブラウザから一瞬で条件計算ができるWebアプリ",
         icon: <Image src="/images/jancalc_icon.png" alt="JANCALC" width={48} height={48} className="w-12 h-12" />,
         url: "https://jancalc.rdx-mahjong.com/",
-        noteUrl: "#", // 仮置き
+        noteUrl: "https://note.com/rikiya_ai/n/nee89b380ff7a",
     },
     {
         id: "janmatch",
