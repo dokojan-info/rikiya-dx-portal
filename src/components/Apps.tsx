@@ -6,7 +6,8 @@ const apps = [
         id: "jancalc",
         name: "JANCALC",
         description: "いつでもブラウザから一瞬で条件計算ができるWebアプリ",
-        icon: <Image src="/images/jancalc_icon.png" alt="JANCALC" width={48} height={48} className="w-12 h-12" />,
+        // 【修正1】 JSXではなく、画像のパス（文字列）だけを持たせる
+        iconSrc: "/images/jancalc_icon.webp",
         url: "https://jancalc.rdx-mahjong.com/",
         noteUrl: "https://note.com/rikiya_ai/n/nee89b380ff7a",
     },
@@ -14,25 +15,25 @@ const apps = [
         id: "janmatch",
         name: "JANMATCH",
         description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
-        icon: <Image src="/images/janmatch_icon.png" alt="JANMATCH" width={48} height={48} className="w-12 h-12" />,
+        iconSrc: "/images/janmatch_icon.webp",
         url: "https://janmatch.rdx-mahjong.com/",
-        noteUrl: "#", // 仮置き
+        noteUrl: "#",
     },
     {
         id: "jansco",
         name: "JANSCO",
         description: "スマートなスコア計算アプリ",
-        icon: <Image src="/images/jansco.png" alt="JANSCO" width={48} height={48} className="w-12 h-12" />,
+        iconSrc: "/images/jansco.webp",
         url: "https://jansco.rdx-mahjong.com/",
-        noteUrl: "#", // 仮置き
+        noteUrl: "#",
     },
     {
         id: "janpass",
         name: "JANPASS",
         description: "デジタル点棒アプリ",
-        icon: <Image src="/images/janpass_icon.png" alt="JANPASS" width={48} height={48} className="w-12 h-12" />,
+        iconSrc: "/images/janpass_icon.webp",
         url: "https://janpass.rdx-mahjong.com/",
-        noteUrl: "#", // 仮置き
+        noteUrl: "#",
     },
 ];
 
@@ -51,7 +52,14 @@ export default function Apps() {
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="p-1">
-                                    {app.icon}
+                                    {/* 【修正2】 ここで初めて Image コンポーネントを呼び出す */}
+                                    <Image
+                                        src={app.iconSrc}
+                                        alt={app.name}
+                                        width={48}
+                                        height={48}
+                                        className="w-12 h-12 object-contain" // object-containを足すと綺麗に収まります
+                                    />
                                 </div>
                             </div>
                             <h3 className="text-xl font-bold mb-2 text-slate-800">{app.name}</h3>
@@ -68,7 +76,7 @@ export default function Apps() {
                                     <ExternalLink className="w-4 h-4" />
                                     アプリを開く
                                 </a>
-                                {app.noteUrl && (
+                                {app.noteUrl && app.noteUrl !== "#" && ( // "#"の時はボタンを非表示にする小技を足しました
                                     <a
                                         href={app.noteUrl}
                                         target="_blank"
