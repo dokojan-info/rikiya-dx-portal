@@ -12,6 +12,14 @@ const apps = [
         noteUrl: "https://note.com/rikiya_ai/n/nee89b380ff7a",
     },
     {
+        id: "janpass",
+        name: "JANPASS",
+        description: "デジタル点棒アプリ",
+        iconSrc: "/images/janpass_icon.webp",
+        url: "https://janpass.rdx-mahjong.com/",
+        noteUrl: "https://note.com/rikiya_ai/n/n04b9cd417cdb",
+    },
+    {
         id: "janmatch",
         name: "JANMATCH",
         description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
@@ -27,14 +35,7 @@ const apps = [
         url: "https://jansco.rdx-mahjong.com/",
         noteUrl: "#",
     },
-    {
-        id: "janpass",
-        name: "JANPASS",
-        description: "デジタル点棒アプリ",
-        iconSrc: "/images/janpass_icon.webp",
-        url: "https://janpass.rdx-mahjong.com/",
-        noteUrl: "#",
-    },
+
 ];
 
 export default function Apps() {
