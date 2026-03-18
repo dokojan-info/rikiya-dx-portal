@@ -1,4 +1,5 @@
 import { Youtube, Twitter, Mail } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
     return (
@@ -14,6 +15,11 @@ export default function Footer() {
                     <a href="mailto:dokojan.info@gmail.com" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors">
                         <Mail className="w-5 h-5" />
                     </a>
+                </div>
+                <div className="mb-6">
+                    <Link href="/privacy" className="text-sm text-slate-500 hover:text-slate-800 transition-colors hover:underline underline-offset-4">
+                        プライバシーポリシー・免責事項
+                    </Link>
                 </div>
                 <p className="text-sm text-slate-500 font-medium">
                     &copy; {new Date().getFullYear()} Rikiya Matsushima (Mahjong RDX). All rights reserved.
