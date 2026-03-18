@@ -67,6 +67,9 @@ export default function Work() {
                                 メールで問い合わせる
                             </a>
                         </div>
+                        <p className="text-sm text-slate-400 mt-4">
+                            ※メーラーが起動しない場合は dokojan.info@gmail.com まで
+                        </p>
                     </div>
                     {/* Background pattern */}
                     <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
