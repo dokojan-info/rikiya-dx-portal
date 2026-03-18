@@ -5,7 +5,7 @@ import Notes from "@/components/Notes";
 import Profile from "@/components/Profile";
 import Activity from "@/components/Activity";
 import Work from "@/components/Work";
-import AdsPlaceholder from "@/components/AdsPlaceholder";
+//　import AdsPlaceholder from "@/components/AdsPlaceholder";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
         <Profile />
         <Activity />
         <Work />
-        <AdsPlaceholder />
+        {/* <AdsPlaceholder /> */}
       </main>
       <Footer />
     </>

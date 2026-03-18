@@ -25,7 +25,7 @@ export default function Activity() {
                         <h3 className="text-xl font-bold mb-4 text-slate-800">2D VTuber ＆ テック系活動</h3>
                         <p className="text-slate-600 leading-relaxed flex-grow">
                             アバターを用いたライブ配信や、新しいテクノロジーの探求など、
-                            次世代のクリエイティブ活動に挑戦中。麻雀以外のジャンルでも発信を行っています。
+                            次世代のクリエイティブ活動に挑戦中。麻雀以外のジャンルでも発信・研究を行っています。
                         </p>
                     </div>
                 </div>
