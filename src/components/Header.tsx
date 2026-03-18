@@ -18,22 +18,22 @@ export default function Header() {
                     />
                 </Link>
                 <nav className="hidden md:flex items-center gap-6">
-                    <Link href="#apps" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#apps" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <Box className="w-4 h-4" /> Apps
                     </Link>
-                    <Link href="#notes" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#notes" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <Edit3 className="w-4 h-4" /> Notes
                     </Link>
-                    <Link href="#profile" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#profile" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <User className="w-4 h-4" /> Profile
                     </Link>
-                    <Link href="#activity" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#activity" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <Activity className="w-4 h-4" /> Activity
                     </Link>
-                    <Link href="#work" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#work" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <HeartHandshake className="w-4 h-4" /> Work
                     </Link>
-                    <Link href="#support" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
+                    <Link href="/#support" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors flex items-center gap-2">
                         <Coffee className="w-4 h-4" /> Support
                     </Link>
                 </nav>
