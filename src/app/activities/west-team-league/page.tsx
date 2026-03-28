@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Trophy, Users, History, FileText } from "lucide-react";
+import { ArrowLeft, Trophy, Users, History, FileText, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -39,15 +39,25 @@ export default function WestTeamLeaguePage() {
                             <p className="text-lg text-slate-600 leading-relaxed mb-6">
                                 Mリーグ発足による麻雀人口の増加や環境の変化に呼応し、地方における麻雀人口とファンの拡大、優れたプレイヤーの発掘を目指し創設された競技麻雀のリーグ戦です。
                             </p>
-                            <a
-                                href="https://docs.google.com/forms/d/e/1FAIpQLSdDYHfvhRbf8GwRTVrux2zLjTlEqXbWPihrFam4D2OQP5rmfQ/viewform?usp=dialog"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm"
-                            >
-                                <FileText className="w-4 h-4" />
-                                大会エントリー / 詳細を見る
-                            </a>
+                            <div className="flex flex-wrap gap-4">
+                                <a
+                                    href="https://mahjong-space.com/index.php?WEST_JAPAN_LEAGUE2025-2026_form"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    大会エントリー / 詳細を見る
+                                </a>
+                                
+                                <Link
+                                    href="/activities/west-team-league/spinoff"
+                                    className="inline-flex items-center gap-2 bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold px-5 py-2.5 rounded-xl border border-orange-200 transition-colors shadow-sm"
+                                >
+                                    <Sparkles className="w-4 h-4" />
+                                    【オフシーズン企画】スピンオフのエントリーはこちら
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
