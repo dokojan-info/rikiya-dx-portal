@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Trophy, Users, History, FileText } from "lucide-react";
+import { ArrowLeft, Trophy, Users, FileText } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 
