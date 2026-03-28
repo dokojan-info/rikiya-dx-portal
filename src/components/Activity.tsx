@@ -1,4 +1,5 @@
-import { CalendarDays, MonitorPlay } from "lucide-react";
+import { CalendarDays, MonitorPlay, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function Activity() {
     return (
@@ -7,16 +8,20 @@ export default function Activity() {
                 <h2 className="text-3xl font-bold mb-12 text-center text-slate-800">Other Activities</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
-                        <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
-                            <CalendarDays className="w-6 h-6 text-blue-600" />
+                    {/* 西日本TEAMリーグ カード（リンク化） */}
+                    <Link href="/activities/west-team-league" className="group bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col hover:border-blue-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <CalendarDays className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
                         </div>
-                        <h3 className="text-xl font-bold mb-4 text-slate-800">西日本TEAMリーグ 広島エリア運営</h3>
-                        <p className="text-slate-600 leading-relaxed flex-grow">
+                        <h3 className="text-xl font-bold mb-4 text-slate-800 group-hover:text-blue-600 transition-colors">西日本TEAMリーグ 広島エリア運営</h3>
+                        <p className="text-slate-600 leading-relaxed flex-grow mb-4">
                             西日本最大規模のプロ・アマチュア問わず参加できる競技麻雀のリーグ戦を運営。
                             地域に根ざした麻雀文化の普及と発展に貢献しています。
                         </p>
-                    </div>
+                        <div className="flex items-center text-sm font-bold text-blue-600 mt-auto">
+                            詳細を見る <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                    </Link>
 
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
                         <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">

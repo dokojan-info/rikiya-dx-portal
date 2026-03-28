@@ -25,7 +25,7 @@ const apps = [
         description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
         iconSrc: "/images/janmatch_icon.webp",
         url: "https://janmatch.rdx-mahjong.com/",
-        noteUrl: "#",
+        noteUrl: "https://note.com/rikiya_ai/n/n90877c0cefb3",
     },
     {
         id: "jansco",
