@@ -2,10 +2,12 @@ export type AppInfo = {
     id: string;
     name: string;
     description: string;
-    iconSrc: string;
-    url: string;
-    noteUrl: string;
+    iconSrc?: string;
+    url?: string;
+    noteUrl?: string;
     longDescription?: string;
+    downloadUrl?: string;
+    instructions?: string;
 };
 
 export const apps: AppInfo[] = [
@@ -44,6 +46,28 @@ export const apps: AppInfo[] = [
         url: "https://jansco.rdx-mahjong.com/",
         noteUrl: "#",
         longDescription: "翻数と符数を選択するだけで瞬時に正式な点数を導き出せるスマートなスコア計算アプリです。複雑な点数ルールを覚えるリソースを減らし、麻雀をより手軽に楽しむためのツールです。"
+    },
+    {
+        id: "mahjong-dict",
+        name: "スマホ用麻雀用語辞書 (Gboard対応)",
+        description: "Gboardにインポートするだけで、難しい麻雀用語や選手名がサクサク変換できるようになります。",
+        instructions: `■ Gboardへのインポート手順
+
+1. 辞書ファイルのダウンロード
+   下記の「辞書をダウンロードする」ボタンから mahjong_dict.txt 形式のファイルをスマートフォンに保存します。
+
+2. Gboardの設定を開く
+   スマートフォンの設定アプリやキーボード上の歯車アイコンから、Gboardの「設定」メニューを開きます。
+
+3. 単語リストを開く
+   設定の中にある「単語リスト」→「単語リスト（日本語）」を開きます。
+
+4. インポートを実行
+   右上のメニュー（︙）から「インポート」を選択し、先ほどダウンロードした mahjong_dict.txt を選択します。
+
+5. 完了
+   インポート完了のメッセージが出れば準備OKです！`,
+        downloadUrl: "/files/mahjong_dict.txt",
     },
 ];
 

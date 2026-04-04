@@ -17,14 +17,19 @@ export default function Apps() {
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="p-1">
-                                    {/* 【修正2】 ここで初めて Image コンポーネントを呼び出す */}
-                                    <Image
-                                        src={app.iconSrc}
-                                        alt={app.name}
-                                        width={48}
-                                        height={48}
-                                        className="w-12 h-12 object-contain" // object-containを足すと綺麗に収まります
-                                    />
+                                    {app.iconSrc ? (
+                                        <Image
+                                            src={app.iconSrc}
+                                            alt={app.name}
+                                            width={48}
+                                            height={48}
+                                            className="w-12 h-12 object-contain"
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 flex items-center justify-center text-4xl font-mahjong-color">
+                                            🀄
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <h3 className="text-xl font-bold mb-2 text-slate-800">{app.name}</h3>
