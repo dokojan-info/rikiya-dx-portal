@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'mahjong-color': ['MahjongColorful', 'sans-serif'],
+        'mahjong-mono': ['MahjongMonochrome', 'sans-serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

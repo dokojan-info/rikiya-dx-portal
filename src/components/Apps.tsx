@@ -1,42 +1,6 @@
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
-
-const apps = [
-    {
-        id: "jancalc",
-        name: "JANCALC",
-        description: "いつでもブラウザから一瞬で条件計算ができるWebアプリ",
-        // 【修正1】 JSXではなく、画像のパス（文字列）だけを持たせる
-        iconSrc: "/images/jancalc_icon.webp",
-        url: "https://jancalc.rdx-mahjong.com/",
-        noteUrl: "https://note.com/rikiya_ai/n/nee89b380ff7a",
-    },
-    {
-        id: "janpass",
-        name: "JANPASS",
-        description: "デジタル点棒アプリ",
-        iconSrc: "/images/janpass_icon.webp",
-        url: "https://janpass.rdx-mahjong.com/",
-        noteUrl: "https://note.com/rikiya_ai/n/n04b9cd417cdb",
-    },
-    {
-        id: "janmatch",
-        name: "JANMATCH",
-        description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
-        iconSrc: "/images/janmatch_icon.webp",
-        url: "https://janmatch.rdx-mahjong.com/",
-        noteUrl: "https://note.com/rikiya_ai/n/n90877c0cefb3",
-    },
-    {
-        id: "jansco",
-        name: "JANSCO",
-        description: "スマートなスコア計算アプリ",
-        iconSrc: "/images/jansco.webp",
-        url: "https://jansco.rdx-mahjong.com/",
-        noteUrl: "#",
-    },
-
-];
+import Link from "next/link";
+import { apps } from "../data/apps";
 
 export default function Apps() {
     return (
@@ -68,26 +32,12 @@ export default function Apps() {
                                 {app.description}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3 mt-auto">
-                                <a
-                                    href={app.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <Link
+                                    href={`/apps/${app.id}`}
                                     className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-medium px-4 py-2.5 rounded-xl transition-colors text-sm"
                                 >
-                                    <ExternalLink className="w-4 h-4" />
-                                    アプリを開く
-                                </a>
-                                {app.noteUrl && app.noteUrl !== "#" && ( // "#"の時はボタンを非表示にする小技を足しました
-                                    <a
-                                        href={app.noteUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 rounded-xl transition-colors text-sm"
-                                    >
-                                        <ExternalLink className="w-4 h-4" />
-                                        使い方を読む
-                                    </a>
-                                )}
+                                    詳細を見る
+                                </Link>
                             </div>
                         </div>
                     ))}

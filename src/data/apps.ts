@@ -1,0 +1,52 @@
+export type AppInfo = {
+    id: string;
+    name: string;
+    description: string;
+    iconSrc: string;
+    url: string;
+    noteUrl: string;
+    longDescription?: string;
+};
+
+export const apps: AppInfo[] = [
+    {
+        id: "jancalc",
+        name: "JANCALC",
+        description: "いつでもブラウザから一瞬で条件計算ができるWebアプリ",
+        iconSrc: "/images/jancalc_icon.webp",
+        url: "https://jancalc.rdx-mahjong.com/",
+        noteUrl: "https://note.com/rikiya_ai/n/nee89b380ff7a",
+        longDescription: "手牌や条件を入力するだけで、瞬時にあがり牌や必要な点差・条件を計算できるWebアプリケーションです。スマホブラウザでの利用に最適化されており、直感的なUIで素早く条件を確認できます。"
+    },
+    {
+        id: "janpass",
+        name: "JANPASS",
+        description: "デジタル点棒アプリ",
+        iconSrc: "/images/janpass_icon.webp",
+        url: "https://janpass.rdx-mahjong.com/",
+        noteUrl: "https://note.com/rikiya_ai/n/n04b9cd417cdb",
+        longDescription: "物理的な点棒を使わずに、スマートフォン上で点棒の受け渡しができるデジタル点棒アプリです。対局の進行状況や各プレイヤーの点数がリアルタイムで共有され、計算ミスを防ぎます。"
+    },
+    {
+        id: "janmatch",
+        name: "JANMATCH",
+        description: "大会・リーグ戦の進行をスムーズにする組み合わせ管理アプリ",
+        iconSrc: "/images/janmatch_icon.webp",
+        url: "https://janmatch.rdx-mahjong.com/",
+        noteUrl: "https://note.com/rikiya_ai/n/n90877c0cefb3",
+        longDescription: "麻雀の大人数での大会やリーグ戦において、参加者の管理、ランダムかつ公平な卓組みの自動生成、そして全卓の成績管理・集計をオンラインで一元管理できる柔軟なシステムです。"
+    },
+    {
+        id: "jansco",
+        name: "JANSCO",
+        description: "スマートなスコア計算アプリ",
+        iconSrc: "/images/jansco.webp",
+        url: "https://jansco.rdx-mahjong.com/",
+        noteUrl: "#",
+        longDescription: "翻数と符数を選択するだけで瞬時に正式な点数を導き出せるスマートなスコア計算アプリです。複雑な点数ルールを覚えるリソースを減らし、麻雀をより手軽に楽しむためのツールです。"
+    },
+];
+
+export function getAppById(id: string): AppInfo | undefined {
+    return apps.find((app) => app.id === id);
+}
