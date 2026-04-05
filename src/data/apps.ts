@@ -69,6 +69,14 @@ export const apps: AppInfo[] = [
    インポート完了のメッセージが出れば準備OKです！`,
         downloadUrl: "/files/mahjong_dict.txt",
     },
+    {
+        id: "janlog",
+        name: "JANLOG",
+        description: "JSONファイルを読み込ませて成績を集計し詳細データを表示するアプリ",
+        iconSrc: "/images/janlog_icon.webp",
+        url: "https://janlog.rdx-mahjong.com/",
+        longDescription: "対局結果のJSONファイルをアップロードするだけで、各種データや成績を自動で集計し、見やすい形で詳細データを可視化します。"
+    },
 ];
 
 export function getAppById(id: string): AppInfo | undefined {
