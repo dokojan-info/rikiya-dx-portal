@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, Activity, Box, HeartHandshake, Coffee, Edit3, Repeat } from "lucide-react";
+import { User, Activity, Box, Edit3, Repeat } from "lucide-react";
 import { useSide } from "@/context/SideContext";
 import Image from "next/image";
 

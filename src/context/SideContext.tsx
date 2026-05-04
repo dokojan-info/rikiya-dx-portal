@@ -29,6 +29,7 @@ export function SideProvider({ children }: { children: ReactNode }) {
 
     const switchTheme = () => setSide((prev) => (prev === "rikiya" ? "richiko" : "rikiya"));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(document as any).startViewTransition) {
       switchTheme();
       return;
@@ -36,6 +37,7 @@ export function SideProvider({ children }: { children: ReactNode }) {
 
     setIsTransitioning(true);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transition = (document as any).startViewTransition(() => {
       flushSync(() => {
         switchTheme();

@@ -1,8 +1,7 @@
 "use client";
 
 import { useSide } from "@/context/SideContext";
-import { richikoProfile } from "@/data/richiko";
-import Image from "next/image";
+
 
 export default function Hero() {
     const { side } = useSide();
