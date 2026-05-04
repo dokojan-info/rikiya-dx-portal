@@ -62,26 +62,35 @@ async function fetchNoteArticles(): Promise<Article[]> {
     }
 }
 
+import SideText from "./SideText";
+
 export default async function Notes() {
     const articles = await fetchNoteArticles();
 
     if (articles.length === 0) {
-        return null; // 記事がなければセクション自体を非表示
+        return null; 
     }
 
     return (
-        <section id="notes" className="py-20 bg-white">
+        <section id="notes" className="py-20 bg-background transition-colors duration-500">
             <div className="container mx-auto px-4 max-w-5xl">
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h2 className="text-3xl font-bold mb-2 text-slate-800">Notes &amp; Blog</h2>
-                        <p className="text-slate-500">開発日記や活動報告、日々の雑記</p>
+                        <h2 className="text-3xl font-bold mb-2 text-foreground">
+                            <SideText rikiya="Notes & Blog" richiko="リチコの活動日記" />
+                        </h2>
+                        <p className="text-slate-500">
+                            <SideText 
+                                rikiya="開発日記や活動報告、日々の雑記" 
+                                richiko="広島の麻雀を広める活動の記録じゃけぇ！" 
+                            />
+                        </p>
                     </div>
                     <a
                         href={NOTE_ACCOUNT_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hidden md:flex items-center gap-2 text-primary font-medium hover:text-blue-700 transition-colors"
+                        className="hidden md:flex items-center gap-2 text-primary font-medium hover:opacity-80 transition-colors"
                     >
                         note一覧を見る <ExternalLink className="w-4 h-4" />
                     </a>
@@ -94,7 +103,7 @@ export default async function Notes() {
                             href={article.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all"
+                            className="group flex flex-col bg-card rounded-2xl border border-slate-100 overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all"
                         >
                             <div className="relative aspect-[1.91/1] w-full overflow-hidden bg-slate-100">
                                 {article.thumbnail ? (
@@ -114,7 +123,7 @@ export default async function Notes() {
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-xs text-slate-400 font-medium">{article.date}</span>
                                 </div>
-                                <h3 className="text-base font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2 mb-4 leading-snug">
+                                <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-4 leading-snug">
                                     {article.title}
                                 </h3>
                                 <div className="flex items-center text-sm font-medium text-slate-500 group-hover:text-primary transition-colors mt-auto">

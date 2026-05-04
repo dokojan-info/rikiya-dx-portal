@@ -3,6 +3,8 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, Sparkles, FileText } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+import Image from "next/image";
+import EntryList from "./EntryList";
 
 export const metadata: Metadata = {
     title: "西日本TEAMリーグ スピンオフ企画 | Rikiya Matsushima",
@@ -29,12 +31,24 @@ export default function WestTeamLeagueSpinoffPage() {
                     <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-slate-100 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 z-0 pointer-events-none"></div>
                         <div className="relative z-10">
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-bold tracking-wider mb-4">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-bold tracking-wider mb-6">
                                 <Sparkles className="w-4 h-4" />
                                 SPECIAL EVENT
                             </span>
-                            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-6 leading-tight">
-                                西日本TEAMリーグ<br />スピンオフ企画（オフシーズン特別開催）
+                            
+                            <div className="mb-8">
+                                <Image 
+                                    src="/images/matsu_title.png" 
+                                    alt="Matsuリーグ 〜西日本TEAMリーグ スピンオフ〜" 
+                                    width={1200} 
+                                    height={600} 
+                                    className="w-full h-auto object-contain rounded-xl"
+                                    priority
+                                />
+                            </div>
+
+                            <h1 className="sr-only">
+                                西日本TEAMリーグ スピンオフ企画（オフシーズン特別開催）
                             </h1>
                             <div className="prose prose-slate max-w-none text-lg text-slate-600 leading-relaxed mb-8">
                                 <p>
@@ -46,17 +60,24 @@ export default function WestTeamLeagueSpinoffPage() {
                                 </p>
                             </div>
 
-                            <a
-                                href="https://forms.gle/qhJRFRXTr3fF2pPBA"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                            >
-                                <FileText className="w-5 h-5" />
-                                スピンオフ企画にエントリーする
-                            </a>
+                            {/* Googleフォーム埋め込み */}
+                            <div className="w-full bg-slate-50 rounded-2xl p-4 sm:p-6 border border-slate-200">
+                                <h2 className="text-xl font-bold text-slate-800 mb-4 text-center">エントリーフォーム</h2>
+                                <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingTop: "150%" }}>
+                                    <iframe 
+                                        src="https://docs.google.com/forms/d/e/1FAIpQLSewrtI4NKVdzNdJHCB_5eYB7c3cv0I2AaKZPUdsrqnv3yt5Gg/viewform?embedded=true" 
+                                        className="absolute top-0 left-0 w-full h-full border-0"
+                                        title="西日本TEAMリーグ スピンオフ企画 エントリーフォーム"
+                                    >
+                                        読み込み中…
+                                    </iframe>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    {/* エントリーリスト（サーバーコンポーネント） */}
+                    <EntryList />
                 </div>
             </main>
 

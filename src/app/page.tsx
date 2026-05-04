@@ -7,6 +7,7 @@ import Activity from "@/components/Activity";
 import Work from "@/components/Work";
 //　import AdsPlaceholder from "@/components/AdsPlaceholder";
 import Footer from "@/components/Footer";
+import { RikiyaOnly } from "@/components/SideVisibility";
 
 export default function Home() {
   return (
@@ -14,8 +15,10 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <Apps />
-        <Notes />
+        <RikiyaOnly>
+          <Apps />
+          <Notes />
+        </RikiyaOnly>
         <Profile />
         <Activity />
         <Work />
