@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Trophy, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -62,6 +62,28 @@ export default function WestTeamLeagueSpinoffPage() {
                                 <p>
                                     どなたでもご参加いただけますので、ぜひ以下のフォームよりエントリー内容をご確認のうえお申し込みください！
                                 </p>
+                            </div>
+
+                            {/* 試合結果リンク */}
+                            <div className="mb-10 bg-orange-50 rounded-2xl p-6 border border-orange-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2 mb-2">
+                                        <Trophy className="w-5 h-5 text-orange-600" />
+                                        大会結果
+                                    </h2>
+                                    <p className="text-orange-800 text-sm">
+                                        Matsuリーグ 第1戦の成績表はこちらからご確認いただけます。
+                                    </p>
+                                </div>
+                                <a 
+                                    href="https://jansco.rdx-mahjong.com/share/aggregation/WzIzXQ" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="shrink-0 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-sm"
+                                >
+                                    第1戦の結果を見る
+                                    <ExternalLink className="w-4 h-4" />
+                                </a>
                             </div>
 
                             {/* Googleフォーム埋め込み */}
