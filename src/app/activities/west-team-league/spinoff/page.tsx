@@ -6,6 +6,9 @@ import { Metadata } from "next";
 import Image from "next/image";
 import EntryList from "./EntryList";
 
+// Cloudflare PagesではISRが使えないため、常に動的レンダリングを強制する
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "西日本TEAMリーグ スピンオフ企画 | Rikiya Matsushima",
     description: "西日本TEAMリーグ オフシーズン特別企画のエントリーと詳細について",

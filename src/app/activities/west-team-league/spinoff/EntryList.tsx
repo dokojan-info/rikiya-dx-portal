@@ -22,7 +22,7 @@ function parseCsvLine(line: string): string[] {
 async function fetchEntries(): Promise<EntryData[]> {
     try {
         // 1. pubhtmlからシート情報を取得
-        const res = await fetch(SPREADSHEET_PUBHTML_URL, { next: { revalidate: 60 } }); // 1分キャッシュ
+        const res = await fetch(SPREADSHEET_PUBHTML_URL, { cache: "no-store" }); // 毎回最新を取得
         if (!res.ok) throw new Error("Failed to fetch pubhtml");
         const html = await res.text();
 
@@ -47,7 +47,7 @@ async function fetchEntries(): Promise<EntryData[]> {
         // 2. 各シートのCSVを取得
         const entryDataPromises = sheets.map(async (sheet) => {
             const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRcNrCHCSsYTL-PGSPeRD3skl9zSe44KnmIU2mIJ65ocDlNE0xpshbllTnIBZdSu2LEt7J8IVVcoEuT/pub?gid=${sheet.gid}&single=true&output=csv`;
-            const csvRes = await fetch(csvUrl, { next: { revalidate: 60 } });
+            const csvRes = await fetch(csvUrl, { cache: "no-store" }); // 毎回最新を取得
             if (!csvRes.ok) return { date: sheet.name, entries: [] };
             const csvText = await csvRes.text();
 
