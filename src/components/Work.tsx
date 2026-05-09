@@ -13,12 +13,14 @@ export default function Work() {
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
                         {side === "rikiya" ? "Work / Contact" : "お仕事・コラボ依頼"}
                     </h2>
-                    <div className="inline-block bg-primary/10 text-primary font-bold px-6 py-3 rounded-xl mb-6">
-                        ※ 現在、新規のお仕事やコラボのご依頼は受け付けておりません。
-                    </div>
+                    {side === "richiko" && (
+                        <div className="inline-block bg-primary/10 text-primary font-bold px-6 py-3 rounded-xl mb-6">
+                            ※ 現在、新規のお仕事やコラボのご依頼は受け付けておりません。
+                        </div>
+                    )}
                     <p className="text-slate-600 max-w-2xl mx-auto">
                         {side === "rikiya" 
-                            ? "麻雀のゲスト出演、大会・イベントの運営支援から、モダンなホームページ制作など、過去に行っておりました事業は現在募集を一旦停止しております。"
+                            ? "麻雀のゲスト出演、大会・イベントの運営支援から、モダンなホームページ制作まで、お気軽にご相談ください。"
                             : "広島の麻雀界隈を盛り上げる活動は引き続き頑張るけん！また募集を再開した時はよろしくや！"
                         }
                     </p>
@@ -78,7 +80,7 @@ export default function Work() {
                         </h3>
                         <p className="text-slate-400 mb-10 max-w-xl mx-auto">
                             {side === "rikiya"
-                                ? "※現在募集停止中につき、ご依頼のご連絡にはお返事できない場合がございます。あらかじめご了承ください。"
+                                ? "ゲスト出演・イベント運営・Web制作など、まずはお気軽にご連絡ください。"
                                 : "※今は新規の募集はお休み中じゃけぇ、お返事できんかもしれんのんよ。ごめんね！"
                             }
                         </p>
