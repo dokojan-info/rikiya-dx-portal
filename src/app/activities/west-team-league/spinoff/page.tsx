@@ -6,7 +6,8 @@ import { Metadata } from "next";
 import Image from "next/image";
 import EntryList from "./EntryList";
 
-// Cloudflare PagesではISRが使えないため、常に動的レンダリングを強制する
+// Cloudflare PagesではEdge Runtimeが必須、かつISRが使えないため動的レンダリングを強制する
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
