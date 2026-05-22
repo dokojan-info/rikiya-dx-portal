@@ -18,7 +18,7 @@ type QuestionGroup = {
   problemType: "wait" | "score";
   settingMode: "preset" | "custom";
   presetLevel: 1 | 2 | 3;
-  // 何切るカスタム
+  // 何待ちカスタム
   minWaits: number;
   maxWaits: number;
   chinitsu: boolean;
@@ -241,7 +241,7 @@ export default function MahjongExamMaker() {
                       <div className="flex items-center gap-3">
                         <span className="text-white font-bold text-sm">問題 {groupIndex + 1}</span>
                         <span className="text-white/80 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                          {isWait(group) ? "何切る（待ち当て）" : "点数計算"}
+                          {isWait(group) ? "何待ち（待ち当て）" : "点数計算"}
                         </span>
                       </div>
                       <button onClick={() => removeGroup(group.id)}
@@ -296,7 +296,7 @@ export default function MahjongExamMaker() {
                                 ))}
                               </div>
                             ) : isWait(group) ? (
-                              /* 何切るカスタム */
+                              /* 何待ちカスタム */
                               <div className="space-y-2">
                                 <div className="grid grid-cols-2 gap-2">
                                   <div>
@@ -451,7 +451,7 @@ export default function MahjongExamMaker() {
             <div className="grid grid-cols-2 gap-3">
               <button onClick={() => addGroup("wait")}
                 className="py-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-xl hover:from-indigo-600 hover:to-blue-600 transition-all flex items-center justify-center gap-2 font-bold shadow-sm">
-                <Plus className="w-5 h-5" /> 何切る問題を追加
+                <Plus className="w-5 h-5" /> 何待ち問題を追加
               </button>
               <button onClick={() => addGroup("score")}
                 className="py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2 font-bold shadow-sm">

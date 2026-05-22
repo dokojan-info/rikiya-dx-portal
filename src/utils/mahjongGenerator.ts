@@ -398,7 +398,7 @@ export const AVAILABLE_YAKU = Object.keys(YAKU_BUILDERS);
 
 const MAX_RETRIES = 300;
 
-// --- 何切る問題 ---
+// --- 何待ち問題 ---
 export const generateWaitProblem = (options: WaitOptions) => {
   // Lv.2 は2パターンからランダム選択
   let effectiveOptions = { ...options };
