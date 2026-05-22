@@ -77,6 +77,13 @@ export const apps: AppInfo[] = [
         url: "https://janlog.rdx-mahjong.com/",
         longDescription: "対局結果のJSONファイルをアップロードするだけで、各種データや成績を自動で集計し、見やすい形で詳細データを可視化します。"
     },
+    {
+        id: "mahjong-exam-maker",
+        name: "麻雀問題作成ツール",
+        description: "麻雀の何切る問題や点数計算問題を自動生成・作成できるツール",
+        url: "/tools/mahjong-exam-maker",
+        longDescription: "待ち当て（何切る）問題や和了点（点数計算）問題をカスタマイズして自動生成したり、手動で問題を入力してオリジナルの麻雀問題用紙を作成・印刷できるツールです。清一色や待ちの数、符・翻数などの細かい条件指定が可能です。"
+    },
 ];
 
 export function getAppById(id: string): AppInfo | undefined {

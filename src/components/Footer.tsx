@@ -8,7 +8,7 @@ export default function Footer() {
     const { side } = useSide();
 
     return (
-        <footer className="bg-card border-t border-slate-100 py-12 transition-colors duration-500">
+        <footer className="bg-card border-t border-slate-100 py-12 transition-colors duration-500 print:hidden">
             <div className="container mx-auto px-4 text-center text-foreground">
                 <div className="flex justify-center gap-6 mb-8">
                     <a href={side === "rikiya" ? "https://x.com/kota_corps" : "https://x.com/naruwa_richiko"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-background flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors border border-slate-100">
