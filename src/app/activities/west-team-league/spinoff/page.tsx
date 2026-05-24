@@ -65,25 +65,52 @@ export default function WestTeamLeagueSpinoffPage() {
                             </div>
 
                             {/* 試合結果リンク */}
-                            <div className="mb-10 bg-orange-50 rounded-2xl p-6 border border-orange-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <div>
-                                    <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2 mb-2">
-                                        <Trophy className="w-5 h-5 text-orange-600" />
-                                        大会結果
-                                    </h2>
-                                    <p className="text-orange-800 text-sm">
-                                        Matsuリーグ 第1戦の成績表はこちらからご確認いただけます。
-                                    </p>
+                            <div className="mb-10 bg-orange-50 rounded-2xl p-6 border border-orange-100">
+                                <h2 className="text-xl font-bold text-orange-900 flex items-center gap-2 mb-4">
+                                    <Trophy className="w-5 h-5 text-orange-600" />
+                                    大会結果
+                                </h2>
+                                <p className="text-orange-800 text-sm mb-4">
+                                    Matsuリーグの各節・トータルの成績表はこちらからご確認いただけます。
+                                </p>
+                                <div className="flex flex-wrap gap-3">
+                                    <a 
+                                        href="https://jansco.rdx-mahjong.com/share/aggregation/WzIzXQ" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+                                    >
+                                        第1節の結果
+                                        <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                    <a 
+                                        href="https://jansco.rdx-mahjong.com/share/aggregation/WzI1XQ" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+                                    >
+                                        第2節の結果
+                                        <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                    <a 
+                                        href="https://jansco.rdx-mahjong.com/share/aggregation/WzI2XQ" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+                                    >
+                                        第3節の結果
+                                        <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                    <a 
+                                        href="https://jansco.rdx-mahjong.com/share/aggregation/WzIzLDI1LDI2XQ" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
+                                    >
+                                        🏆 トータル成績
+                                        <ExternalLink className="w-4 h-4" />
+                                    </a>
                                 </div>
-                                <a 
-                                    href="https://jansco.rdx-mahjong.com/share/aggregation/WzIzXQ" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="shrink-0 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-sm"
-                                >
-                                    第1戦の結果を見る
-                                    <ExternalLink className="w-4 h-4" />
-                                </a>
                             </div>
 
                             {/* Googleフォーム埋め込み */}
