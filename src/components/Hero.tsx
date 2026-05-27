@@ -12,9 +12,9 @@ export default function Hero() {
                 <div className="flex-1 max-w-2xl">
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
                         {side === "rikiya" ? (
-                            <>プロの思考を、<br className="md:hidden" />あなたの麻雀に。</>
+                            <>麻雀の世界をデジタル力でもっと便利に！！</>
                         ) : (
-                            <>広島と麻雀の魅力を、<br className="md:hidden" />世界中に届けるんよ！</>
+                            <>広島と麻雀の魅力を<br className="md:hidden" />世界中に届けるんよ！</>
                         )}
                     </h1>
                     <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed">
