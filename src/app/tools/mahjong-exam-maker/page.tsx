@@ -29,6 +29,9 @@ type QuestionGroup = {
   maxFu: number;
   minHan: number;
   maxHan: number;
+  scoreWaitTypes: ("tanki" | "nobetan" | "ryanmen" | "shanpon")[];
+  allowNaki: boolean;
+  allowAnkan: boolean;
   // 小問
   subQuestions: SubQuestion[];
 };
@@ -45,6 +48,7 @@ const defaultGroupSettings = (type: "wait" | "score"): Omit<QuestionGroup, "id" 
   presetLevel: 1,
   minWaits: 1, maxWaits: 3, chinitsu: false, allow4tiles: false,
   yakuFilter: ["平和", "七対子"], minFu: 0, maxFu: 999, minHan: 1, maxHan: 1,
+  scoreWaitTypes: ["tanki", "ryanmen", "shanpon", "nobetan"], allowNaki: false, allowAnkan: false,
 });
 
 // 123m -> 1m2m3m に変換
@@ -156,6 +160,7 @@ export default function MahjongExamMaker() {
               mode: "custom" as const, presetLevel: 1 as const,
               yakuFilter: group.yakuFilter, minFu: group.minFu, maxFu: group.maxFu,
               minHan: group.minHan, maxHan: group.maxHan,
+              waitTypes: group.scoreWaitTypes, allowNaki: group.allowNaki, allowAnkan: group.allowAnkan,
             };
         const problem = gen.generateScoreProblem(options);
         setGroups(prev => prev.map(g =>
@@ -376,6 +381,39 @@ export default function MahjongExamMaker() {
                                       </select>
                                     </div>
                                   </div>
+                                </div>
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-500 mb-1 block">待ちの形</label>
+                                  <div className="flex flex-wrap gap-1">
+                                    {(["tanki", "nobetan", "ryanmen", "shanpon"] as const).map(wt => {
+                                      const label = wt === "tanki" ? "単騎" : wt === "nobetan" ? "ノベタン" : wt === "ryanmen" ? "両面" : "シャンポン";
+                                      const sel = group.scoreWaitTypes.includes(wt);
+                                      return (
+                                        <button key={wt}
+                                          onClick={() => {
+                                            const newTypes = sel ? group.scoreWaitTypes.filter(t => t !== wt) : [...group.scoreWaitTypes, wt];
+                                            if (newTypes.length > 0) updateGroup(group.id, { scoreWaitTypes: newTypes });
+                                          }}
+                                          className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                                            sel ? "bg-emerald-100 border-emerald-400 text-emerald-700" : "bg-white border-slate-200 text-slate-400 hover:border-slate-300"
+                                          }`}>
+                                          {label}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                                <div className="flex gap-4">
+                                  <label className="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" checked={group.allowNaki} onChange={(e) => updateGroup(group.id, { allowNaki: e.target.checked })}
+                                      className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600" />
+                                    <span className="text-xs text-slate-700">鳴きを含める</span>
+                                  </label>
+                                  <label className="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" checked={group.allowAnkan} onChange={(e) => updateGroup(group.id, { allowAnkan: e.target.checked })}
+                                      className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600" />
+                                    <span className="text-xs text-slate-700">暗槓を含める</span>
+                                  </label>
                                 </div>
                               </div>
                             )}

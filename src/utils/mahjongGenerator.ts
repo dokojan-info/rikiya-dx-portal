@@ -75,6 +75,9 @@ export type ScoreOptions = {
   maxFu: number;
   minHan: number;
   maxHan: number;
+  waitTypes?: ("tanki" | "nobetan" | "ryanmen" | "shanpon")[];
+  allowNaki?: boolean;
+  allowAnkan?: boolean;
 };
 
 // プリセットから内部オプションに変換
@@ -444,77 +447,239 @@ export const generateWaitProblem = (options: WaitOptions) => {
   throw new Error("条件を満たす問題が見つかりませんでした。条件を緩めてお試しください。");
 };
 
+type Block = { type: 'shuntsu' | 'koutsu' | 'janto', suit: string, start?: number, tile?: string, isNaki?: boolean, nakiType?: 'chi' | 'pon' | 'minkan' | 'ankan' };
+
+const buildCustomScoreProblemInner = (options: ScoreOptions) => {
+  let suitLimit: string | undefined = undefined;
+  let pool = ALL_TILES;
+  let forceDragon = false;
+  let forceShuntsu = false;
+
+  if (options.yakuFilter && options.yakuFilter.length > 0) {
+    if (options.yakuFilter.includes("清一色")) {
+      suitLimit = pick(NUM_SUITS);
+      pool = pool.filter(t => t[1] === suitLimit);
+    } else if (options.yakuFilter.includes("混一色")) {
+      suitLimit = pick(NUM_SUITS);
+      pool = pool.filter(t => t[1] === suitLimit || t[1] === 'z');
+    } else if (options.yakuFilter.includes("タンヤオ")) {
+      pool = TANYAO_TILES;
+    }
+    if (options.yakuFilter.includes("役牌")) forceDragon = true;
+    if (options.yakuFilter.includes("平和")) forceShuntsu = true;
+  }
+
+  let waitType = "tanki";
+  if (options.waitTypes && options.waitTypes.length > 0) {
+    waitType = pick(options.waitTypes);
+  } else {
+    waitType = pick(["tanki", "ryanmen", "shanpon", "nobetan"]);
+  }
+
+  const blocks: Block[] = [];
+  let winningTile = "";
+
+  if (waitType === "tanki") {
+    const t = pick(pool);
+    blocks.push({ type: 'janto', suit: t[1], tile: t });
+    winningTile = t;
+  } else if (waitType === "ryanmen") {
+    const s = suitLimit || pick(NUM_SUITS);
+    const start = pick([2, 3, 4, 5, 6]);
+    blocks.push({ type: 'shuntsu', suit: s, start });
+    winningTile = Math.random() < 0.5 ? `${start - 1}${s}` : `${start + 3}${s}`;
+  } else if (waitType === "shanpon") {
+    const t = pick(pool);
+    blocks.push({ type: 'koutsu', suit: t[1], tile: t });
+    winningTile = t;
+  } else if (waitType === "nobetan") {
+    const s = suitLimit || pick(NUM_SUITS);
+    const start = pick([2, 3, 4, 5, 6]);
+    blocks.push({ type: 'shuntsu', suit: s, start });
+    const jantoStart = Math.random() < 0.5 ? start - 1 : start + 3;
+    blocks.push({ type: 'janto', suit: s, tile: `${jantoStart}${s}` });
+    winningTile = `${jantoStart}${s}`;
+  }
+
+  const jantoCount = blocks.filter(b => b.type === 'janto').length;
+  let mentsuCount = blocks.filter(b => b.type !== 'janto').length;
+
+  if (jantoCount === 0) {
+    let t = pick(pool);
+    if (forceShuntsu) {
+      const nonYakuhai = pool.filter(x => !['5z', '6z', '7z', '1z', '2z', '3z', '4z'].includes(x));
+      t = nonYakuhai.length > 0 ? pick(nonYakuhai) : pick(ALL_TILES.filter(x => x[1] !== 'z'));
+    }
+    blocks.push({ type: 'janto', suit: t[1], tile: t });
+  }
+
+  while (mentsuCount < 4) {
+    if (forceDragon && !blocks.some(b => b.tile && DRAGON_TILES.includes(b.tile))) {
+      const d = pick(DRAGON_TILES);
+      blocks.push({ type: 'koutsu', suit: 'z', tile: d });
+    } else if (forceShuntsu) {
+      const s = suitLimit || pick(NUM_SUITS);
+      const start = randInt(1, 7);
+      blocks.push({ type: 'shuntsu', suit: s, start });
+    } else {
+      if (Math.random() < 0.6) {
+        const s = suitLimit || pick(NUM_SUITS);
+        const start = randInt(1, 7);
+        blocks.push({ type: 'shuntsu', suit: s, start });
+      } else {
+        const t = pick(pool);
+        blocks.push({ type: 'koutsu', suit: t[1], tile: t });
+      }
+    }
+    mentsuCount++;
+  }
+
+  if (options.allowNaki || options.allowAnkan) {
+    for (let i = 0; i < blocks.length; i++) {
+      if (blocks[i].type === 'janto') continue;
+      if (waitType === "nobetan" && i <= 1) continue;
+      if (i === 0) continue;
+
+      if (options.allowNaki && Math.random() < 0.3) {
+        blocks[i].isNaki = true;
+        if (blocks[i].type === 'shuntsu') blocks[i].nakiType = 'chi';
+        else blocks[i].nakiType = pick(['pon', 'minkan']);
+      } else if (options.allowAnkan && blocks[i].type === 'koutsu' && Math.random() < 0.2) {
+        blocks[i].isNaki = true;
+        blocks[i].nakiType = 'ankan';
+      }
+    }
+  }
+
+  const closedTiles: string[] = [];
+  let nakiStr = "";
+  let suffixText = "";
+
+  blocks.forEach((b, i) => {
+    let blockTiles: string[] = [];
+    if (b.type === 'shuntsu') {
+      blockTiles = [`${b.start}${b.suit}`, `${b.start! + 1}${b.suit}`, `${b.start! + 2}${b.suit}`];
+    } else {
+      blockTiles = [b.tile!, b.tile!, b.tile!];
+      if (b.type === 'janto') blockTiles = [b.tile!, b.tile!];
+      if (b.nakiType === 'minkan' || b.nakiType === 'ankan') blockTiles.push(b.tile!);
+    }
+
+    if (i === 0 || (waitType === 'nobetan' && i === 1)) {
+      const winIdx = blockTiles.indexOf(winningTile);
+      if (winIdx !== -1) {
+        blockTiles.splice(winIdx, 1);
+        closedTiles.push(...blockTiles);
+        return;
+      }
+    }
+
+    if (b.isNaki) {
+      if (b.nakiType === 'chi') {
+        nakiStr += `+${blockTiles.join('')}`;
+        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}(チー)`;
+      } else if (b.nakiType === 'pon') {
+        nakiStr += `+${blockTiles[0]}${blockTiles[1]}${blockTiles[2]}`;
+        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}(ポン)`;
+      } else if (b.nakiType === 'minkan') {
+        nakiStr += `+${blockTiles[0]}${blockTiles[1]}${blockTiles[2]}${blockTiles[3]}`;
+        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}${blockTiles[3]}(明槓)`;
+      } else if (b.nakiType === 'ankan') {
+        nakiStr += `+${blockTiles[0]}${blockTiles[1]}`;
+        suffixText += ` 0z${blockTiles[0]}${blockTiles[1]}0z(暗槓)`;
+      }
+    } else {
+      closedTiles.push(...blockTiles);
+    }
+  });
+
+  const isTsumo = Math.random() < 0.5;
+  const formattedTenpai = formatTilesArray(closedTiles);
+  const riichiInput = formattedTenpai + nakiStr + winningTile;
+  
+  return {
+    riichiInput,
+    formattedTenpai,
+    suffix: `${winningTile} ${isTsumo ? 'ツモ' : 'ロン'}${suffixText}`
+  };
+};
+
 // --- 点数計算問題 ---
 export const generateScoreProblem = (options: ScoreOptions) => {
-  // 役フィルタがある場合、その役の生成関数をランダムに選ぶ
-  const yakuBuilders = options.yakuFilter.length > 0
-    ? options.yakuFilter.filter(y => YAKU_BUILDERS[y])
-    : [];
-
   let retries = 0;
 
   while (retries < MAX_RETRIES) {
-    let winningHand: string[];
     try {
-      if (yakuBuilders.length > 0) {
-        const selectedYaku = pick(yakuBuilders);
-        winningHand = YAKU_BUILDERS[selectedYaku](true);
-      } else {
-        winningHand = buildGenericHand(undefined, true);
+      let isChiitoi = false;
+      if (options.yakuFilter.length > 0 && options.yakuFilter.includes("七対子")) {
+         if (options.yakuFilter.length === 1 || Math.random() < (1 / options.yakuFilter.length)) {
+             isChiitoi = true;
+         }
       }
+
+      if (isChiitoi) {
+         if (options.waitTypes && options.waitTypes.length > 0 && !options.waitTypes.includes("tanki")) {
+             retries++; continue;
+         }
+         const winningHand = buildChiitoiHand(true);
+         const lastTile = winningHand[winningHand.length - 1];
+         const tenpaiHandArr = [...winningHand];
+         tenpaiHandArr.pop();
+         
+         const formattedTenpai = formatTilesArray(tenpaiHandArr);
+         const isTsumo = Math.random() < 0.5;
+         const suffix = `${lastTile} ${isTsumo ? 'ツモ' : 'ロン'}`;
+         const riichiInput = formattedTenpai + lastTile;
+         
+         const riichi = new Riichi(riichiInput);
+         const calcResult = riichi.calc();
+         if (calcResult.error) { retries++; continue; }
+
+         const han = calcResult.han || 0;
+         const fu = calcResult.fu || 0;
+         const yaku = calcResult.yaku ? Object.keys(calcResult.yaku).join(', ') : '';
+         const points = calcResult.ten;
+
+         if (fu < options.minFu || fu > options.maxFu) { retries++; continue; }
+         if (han < options.minHan || han > options.maxHan) { retries++; continue; }
+         
+         if (options.yakuFilter.length > 0 && calcResult.yaku) {
+           const resultYakuNames = Object.keys(calcResult.yaku);
+           const hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+           if (!hasMatch) { retries++; continue; }
+         }
+         return { tiles: formattedTenpai, suffix, answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}` };
+      }
+
+      const p = buildCustomScoreProblemInner(options);
+      
+      const riichi = new Riichi(p.riichiInput);
+      const calcResult = riichi.calc();
+
+      if (calcResult.error) { retries++; continue; }
+
+      const han = calcResult.han || 0;
+      const fu = calcResult.fu || 0;
+      const yaku = calcResult.yaku ? Object.keys(calcResult.yaku).join(', ') : '';
+      const points = calcResult.ten;
+
+      if (fu < options.minFu || fu > options.maxFu) { retries++; continue; }
+      if (han < options.minHan || han > options.maxHan) { retries++; continue; }
+
+      if (options.yakuFilter.length > 0 && calcResult.yaku) {
+        const resultYakuNames = Object.keys(calcResult.yaku);
+        const hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+        if (!hasMatch) { retries++; continue; }
+      }
+
+      return {
+        tiles: p.formattedTenpai,
+        suffix: p.suffix,
+        answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`
+      };
     } catch {
       retries++;
-      continue;
     }
-
-    // 14枚からどれか1枚を抜いてアガリ牌とする
-    for (let i = 0; i < winningHand.length; i++) {
-      const lastTile = winningHand[i];
-      const tenpaiHandArr = [...winningHand];
-      tenpaiHandArr.splice(i, 1);
-
-      // 待ちチェック（自前エンジン）
-      const waits = calculateWaits(tenpaiHandArr);
-      if (waits.length === 0) continue;
-
-      const formattedTenpai = formatTilesArray(tenpaiHandArr);
-      const isTsumo = Math.random() < 0.5;
-      const suffix = `${lastTile} ${isTsumo ? 'ツモ' : 'ロン'}`;
-
-      // 点数計算（riichiを使用、14枚のアガリ形なので安全）
-      const riichiInput = formattedTenpai + lastTile;
-      try {
-        const riichi = new Riichi(riichiInput);
-        const calcResult = riichi.calc();
-
-        if (calcResult.error) continue;
-
-        const han = calcResult.han || 0;
-        const fu = calcResult.fu || 0;
-        const yaku = calcResult.yaku ? Object.keys(calcResult.yaku).join(', ') : '';
-        const points = calcResult.ten;
-
-        // 符・翻のフィルタ
-        if (fu < options.minFu || fu > options.maxFu) continue;
-        if (han < options.minHan || han > options.maxHan) continue;
-
-        // 役フィルタ（指定がある場合、少なくとも1つの指定役を含むか）
-        if (options.yakuFilter.length > 0 && calcResult.yaku) {
-          const resultYakuNames = Object.keys(calcResult.yaku);
-          const hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
-          if (!hasMatch) continue;
-        }
-
-        return {
-          tiles: formattedTenpai,
-          suffix: suffix,
-          answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`
-        };
-      } catch {
-        continue;
-      }
-    }
-    retries++;
   }
 
   throw new Error("条件を満たす問題が見つかりませんでした。条件を緩めてお試しください。");
