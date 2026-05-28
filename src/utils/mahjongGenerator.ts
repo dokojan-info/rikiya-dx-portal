@@ -553,7 +553,7 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
 
   const closedTiles: string[] = [];
   let nakiStr = "";
-  let suffixText = "";
+  let nakiVisualStr = "";
 
   blocks.forEach((b, i) => {
     let blockTiles: string[] = [];
@@ -575,18 +575,19 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     }
 
     if (b.isNaki) {
+      const suit = blockTiles[0].substring(1);
       if (b.nakiType === 'chi') {
         nakiStr += `+${blockTiles.join('')}`;
-        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}(チー)`;
+        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
       } else if (b.nakiType === 'pon') {
-        nakiStr += `+${blockTiles[0]}${blockTiles[1]}${blockTiles[2]}`;
-        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}(ポン)`;
+        nakiStr += `+${blockTiles.join('')}`;
+        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
       } else if (b.nakiType === 'minkan') {
-        nakiStr += `+${blockTiles[0]}${blockTiles[1]}${blockTiles[2]}${blockTiles[3]}`;
-        suffixText += ` ${blockTiles[0]}-${blockTiles[1]}${blockTiles[2]}${blockTiles[3]}(明槓)`;
+        nakiStr += `+${blockTiles.join('')}`;
+        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
       } else if (b.nakiType === 'ankan') {
         nakiStr += `+${blockTiles[0]}${blockTiles[1]}`;
-        suffixText += ` 0z${blockTiles[0]}${blockTiles[1]}0z(暗槓)`;
+        nakiVisualStr += ` 0z${blockTiles[0][0]}${blockTiles[1][0]}${suit}0z`;
       }
     } else {
       closedTiles.push(...blockTiles);
@@ -594,13 +595,13 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
   });
 
   const isTsumo = Math.random() < 0.5;
-  const formattedTenpai = formatTilesArray(closedTiles);
-  const riichiInput = formattedTenpai + nakiStr + winningTile;
+  const formattedTenpai = formatTilesArray(closedTiles) + nakiVisualStr;
+  const riichiInput = formatTilesArray(closedTiles) + nakiStr + winningTile;
   
   return {
     riichiInput,
     formattedTenpai,
-    suffix: `${winningTile} ${isTsumo ? 'ツモ' : 'ロン'}${suffixText}`
+    suffix: `${winningTile} ${isTsumo ? 'ツモ' : 'ロン'}`
   };
 };
 
