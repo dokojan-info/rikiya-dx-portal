@@ -539,8 +539,12 @@ export default function MahjongExamMaker() {
                           （{subIndex + 1}）
                         </span>
                         <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
-                          <div className="text-5xl print:text-4xl font-mahjong-color text-slate-800 print:text-black leading-none py-1">
-                            {sub.tiles ? expandTiles(sub.tiles) : <span className="text-sm text-slate-300 font-sans print:hidden">(未入力)</span>}
+                          <div className="text-5xl print:text-4xl font-mahjong-color text-slate-800 print:text-black leading-none py-1 flex flex-wrap gap-x-6 gap-y-2">
+                            {sub.tiles ? (
+                              sub.tiles.split(/[\s　]+/).filter(Boolean).map((part, i) => (
+                                <span key={i}>{expandTiles(part)}</span>
+                              ))
+                            ) : <span className="text-sm text-slate-300 font-sans print:hidden">(未入力)</span>}
                           </div>
                           {sub.suffix && (
                             <span className="text-xl print:text-lg font-bold text-slate-700 print:text-black ml-3 whitespace-nowrap">

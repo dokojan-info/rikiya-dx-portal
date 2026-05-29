@@ -638,16 +638,16 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
       const suit = blockTiles[0].substring(1);
       if (b.nakiType === 'chi') {
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
-        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
+        nakiVisualStr += `　${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
       } else if (b.nakiType === 'pon') {
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
-        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
+        nakiVisualStr += `　${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${suit}`;
       } else if (b.nakiType === 'minkan') {
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
-        nakiVisualStr += ` ${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
+        nakiVisualStr += `　${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
       } else if (b.nakiType === 'ankan') {
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${suit}`;
-        nakiVisualStr += ` 0z${blockTiles[0][0]}${blockTiles[1][0]}${suit}0z`;
+        nakiVisualStr += `　0z${blockTiles[0][0]}${blockTiles[1][0]}${suit}0z`;
       }
     } else {
       closedTiles.push(...blockTiles);
