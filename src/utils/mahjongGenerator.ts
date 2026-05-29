@@ -525,6 +525,41 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     blocks.push({ type: 'janto', suit: t[1], tile: t });
   }
 
+  const forceKoutsu = targetYakus.includes("対々和");
+
+  mentsuCount = blocks.filter(b => b.type !== 'janto').length;
+
+  if (targetYakus.includes("三色同順")) {
+    const start = targetYakus.includes("タンヤオ") ? randInt(2, 6) : randInt(1, 7);
+    ['m', 'p', 's'].forEach(s => {
+      if (mentsuCount < 4) {
+         blocks.push({ type: 'shuntsu', suit: s, start });
+         mentsuCount++;
+      }
+    });
+  }
+
+  if (targetYakus.includes("一気通貫")) {
+    const s = suitLimit || pick(NUM_SUITS);
+    [1, 4, 7].forEach(start => {
+      if (mentsuCount < 4) {
+         blocks.push({ type: 'shuntsu', suit: s, start });
+         mentsuCount++;
+      }
+    });
+  }
+
+  if (targetYakus.includes("一盃口")) {
+    const s = suitLimit || pick(NUM_SUITS);
+    const start = targetYakus.includes("タンヤオ") ? randInt(2, 6) : randInt(1, 7);
+    for(let i=0; i<2; i++) {
+      if (mentsuCount < 4) {
+         blocks.push({ type: 'shuntsu', suit: s, start });
+         mentsuCount++;
+      }
+    }
+  }
+
   while (mentsuCount < 4) {
     if (forceDragon && !blocks.some(b => b.tile && DRAGON_TILES.includes(b.tile))) {
       const d = pick(DRAGON_TILES);
@@ -533,6 +568,9 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
       const s = suitLimit || pick(NUM_SUITS);
       const start = randInt(1, 7);
       blocks.push({ type: 'shuntsu', suit: s, start });
+    } else if (forceKoutsu) {
+      const t = pick(pool);
+      blocks.push({ type: 'koutsu', suit: t[1], tile: t });
     } else {
       if (Math.random() < 0.6) {
         const s = suitLimit || pick(NUM_SUITS);
