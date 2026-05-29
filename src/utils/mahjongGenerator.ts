@@ -77,8 +77,7 @@ export type ScoreOptions = {
   minHan: number;
   maxHan: number;
   waitTypes?: ("tanki" | "nobetan" | "ryanmen" | "shanpon")[];
-  allowNaki?: boolean;
-  allowAnkan?: boolean;
+  scoreNakiTypes?: ("chi" | "pon" | "minkan" | "ankan")[];
 };
 
 // プリセットから内部オプションに変換
@@ -584,20 +583,31 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     mentsuCount++;
   }
 
-  if (options.allowNaki || options.allowAnkan) {
+  if (options.scoreNakiTypes && options.scoreNakiTypes.length > 0) {
+    const requestedNaki = [...options.scoreNakiTypes];
     for (let i = 0; i < blocks.length; i++) {
       if (blocks[i].type === 'janto') continue;
       if (waitType === "nobetan" && i <= 1) continue;
       if (i === 0) continue;
 
-      if (options.allowNaki && Math.random() < 0.3) {
-        blocks[i].isNaki = true;
-        if (blocks[i].type === 'shuntsu') blocks[i].nakiType = 'chi';
-        else blocks[i].nakiType = pick(['pon', 'minkan']);
-      } else if (options.allowAnkan && blocks[i].type === 'koutsu' && Math.random() < 0.2) {
-        blocks[i].isNaki = true;
-        blocks[i].nakiType = 'ankan';
+      if (requestedNaki.length > 0) {
+        const shuntsuNakis = requestedNaki.filter(r => r === 'chi');
+        const koutsuNakis = requestedNaki.filter(r => r !== 'chi');
+        
+        if (blocks[i].type === 'shuntsu' && shuntsuNakis.length > 0) {
+           blocks[i].isNaki = true;
+           blocks[i].nakiType = 'chi';
+           requestedNaki.splice(requestedNaki.indexOf('chi'), 1);
+        } else if (blocks[i].type === 'koutsu' && koutsuNakis.length > 0) {
+           blocks[i].isNaki = true;
+           const type = pick(koutsuNakis) as 'pon' | 'minkan' | 'ankan';
+           blocks[i].nakiType = type;
+           requestedNaki.splice(requestedNaki.indexOf(type), 1);
+        }
       }
+    }
+    if (requestedNaki.length > 0) {
+      return { riichiInput: "", formattedTenpai: "", suffix: "" };
     }
   }
 
@@ -710,6 +720,11 @@ export const generateScoreProblem = (options: ScoreOptions) => {
 
       const p = buildCustomScoreProblemInner(options);
       
+      if (!p.riichiInput) {
+        retries++;
+        continue;
+      }
+
       const riichi = new Riichi(p.riichiInput);
       const calcResult = riichi.calc();
 

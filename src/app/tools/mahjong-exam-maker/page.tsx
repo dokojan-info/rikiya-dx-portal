@@ -31,8 +31,7 @@ type QuestionGroup = {
   minHan: number;
   maxHan: number;
   scoreWaitTypes: ("tanki" | "nobetan" | "ryanmen" | "shanpon")[];
-  allowNaki: boolean;
-  allowAnkan: boolean;
+  scoreNakiTypes: ("chi" | "pon" | "minkan" | "ankan")[];
   // 小問
   subQuestions: SubQuestion[];
 };
@@ -49,7 +48,7 @@ const defaultGroupSettings = (type: "wait" | "score"): Omit<QuestionGroup, "id" 
   presetLevel: 1,
   minWaits: 1, maxWaits: 3, chinitsu: false, allow4tiles: false,
   yakuFilter: ["平和", "七対子"], yakuFilterMode: "or", minFu: 0, maxFu: 999, minHan: 1, maxHan: 1,
-  scoreWaitTypes: ["tanki", "ryanmen", "shanpon", "nobetan"], allowNaki: false, allowAnkan: false,
+  scoreWaitTypes: ["tanki", "ryanmen", "shanpon", "nobetan"], scoreNakiTypes: [],
 });
 
 // 123m -> 1m2m3m に変換
@@ -161,7 +160,7 @@ export default function MahjongExamMaker() {
               mode: "custom" as const, presetLevel: 1 as const,
               yakuFilter: group.yakuFilter, yakuFilterMode: group.yakuFilterMode, minFu: group.minFu, maxFu: group.maxFu,
               minHan: group.minHan, maxHan: group.maxHan,
-              waitTypes: group.scoreWaitTypes, allowNaki: group.allowNaki, allowAnkan: group.allowAnkan,
+              waitTypes: group.scoreWaitTypes, scoreNakiTypes: group.scoreNakiTypes,
             };
         const problem = gen.generateScoreProblem(options);
         setGroups(prev => prev.map(g =>
@@ -412,17 +411,32 @@ export default function MahjongExamMaker() {
                                     })}
                                   </div>
                                 </div>
-                                <div className="flex gap-4">
-                                  <label className="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" checked={group.allowNaki} onChange={(e) => updateGroup(group.id, { allowNaki: e.target.checked })}
-                                      className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600" />
-                                    <span className="text-xs text-slate-700">鳴きを含める</span>
-                                  </label>
-                                  <label className="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" checked={group.allowAnkan} onChange={(e) => updateGroup(group.id, { allowAnkan: e.target.checked })}
-                                      className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600" />
-                                    <span className="text-xs text-slate-700">暗槓を含める</span>
-                                  </label>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-slate-500 block">必須含める鳴き（指定した場合必ず出現）</label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {[
+                                      { id: "chi", label: "チー" },
+                                      { id: "pon", label: "ポン" },
+                                      { id: "minkan", label: "明槓" },
+                                      { id: "ankan", label: "暗槓" }
+                                    ].map(naki => {
+                                      const isSelected = group.scoreNakiTypes?.includes(naki.id as "chi" | "pon" | "minkan" | "ankan") ?? false;
+                                      return (
+                                        <label key={naki.id} className="flex items-center gap-1.5 cursor-pointer">
+                                          <input type="checkbox" checked={isSelected}
+                                            onChange={(e) => {
+                                              const current = group.scoreNakiTypes || [];
+                                              const newTypes = e.target.checked 
+                                                ? [...current, naki.id] 
+                                                : current.filter(t => t !== naki.id);
+                                              updateGroup(group.id, { scoreNakiTypes: newTypes as ("chi" | "pon" | "minkan" | "ankan")[] });
+                                            }}
+                                            className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600" />
+                                          <span className="text-xs text-slate-700">{naki.label}</span>
+                                        </label>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                               </div>
                             )}
