@@ -25,6 +25,7 @@ type QuestionGroup = {
   allow4tiles: boolean;
   // 点数計算カスタム
   yakuFilter: string[];
+  yakuFilterMode: "or" | "and";
   minFu: number;
   maxFu: number;
   minHan: number;
@@ -47,7 +48,7 @@ const defaultGroupSettings = (type: "wait" | "score"): Omit<QuestionGroup, "id" 
   settingMode: "preset",
   presetLevel: 1,
   minWaits: 1, maxWaits: 3, chinitsu: false, allow4tiles: false,
-  yakuFilter: ["平和", "七対子"], minFu: 0, maxFu: 999, minHan: 1, maxHan: 1,
+  yakuFilter: ["平和", "七対子"], yakuFilterMode: "or", minFu: 0, maxFu: 999, minHan: 1, maxHan: 1,
   scoreWaitTypes: ["tanki", "ryanmen", "shanpon", "nobetan"], allowNaki: false, allowAnkan: false,
 });
 
@@ -158,7 +159,7 @@ export default function MahjongExamMaker() {
           ? gen.scorePresetToOptions(group.presetLevel)
           : {
               mode: "custom" as const, presetLevel: 1 as const,
-              yakuFilter: group.yakuFilter, minFu: group.minFu, maxFu: group.maxFu,
+              yakuFilter: group.yakuFilter, yakuFilterMode: group.yakuFilterMode, minFu: group.minFu, maxFu: group.maxFu,
               minHan: group.minHan, maxHan: group.maxHan,
               waitTypes: group.scoreWaitTypes, allowNaki: group.allowNaki, allowAnkan: group.allowAnkan,
             };
@@ -336,7 +337,15 @@ export default function MahjongExamMaker() {
                               /* 点数計算カスタム */
                               <div className="space-y-2">
                                 <div>
-                                  <label className="text-[10px] font-bold text-slate-500 mb-1 block">手役フィルタ</label>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <label className="text-[10px] font-bold text-slate-500 block">手役フィルタ</label>
+                                    <div className="flex items-center bg-slate-100 rounded p-0.5">
+                                      <button onClick={() => updateGroup(group.id, { yakuFilterMode: "or" })}
+                                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors ${group.yakuFilterMode === "or" ? "bg-white shadow-sm text-slate-700" : "text-slate-400 hover:text-slate-600"}`}>OR</button>
+                                      <button onClick={() => updateGroup(group.id, { yakuFilterMode: "and" })}
+                                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors ${group.yakuFilterMode === "and" ? "bg-white shadow-sm text-slate-700" : "text-slate-400 hover:text-slate-600"}`}>AND</button>
+                                    </div>
+                                  </div>
                                   <div className="flex flex-wrap gap-1">
                                     {AVAILABLE_YAKU_LIST.map(yaku => {
                                       const sel = group.yakuFilter.includes(yaku);

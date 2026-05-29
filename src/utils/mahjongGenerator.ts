@@ -71,6 +71,7 @@ export type ScoreOptions = {
   mode: "preset" | "custom";
   presetLevel: 1 | 2 | 3;
   yakuFilter: string[];
+  yakuFilterMode?: "or" | "and";
   minFu: number;
   maxFu: number;
   minHan: number;
@@ -455,18 +456,29 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
   let forceDragon = false;
   let forceShuntsu = false;
 
+  const mode = options.yakuFilterMode || "or";
+  let targetYakus: string[] = [];
+
   if (options.yakuFilter && options.yakuFilter.length > 0) {
-    if (options.yakuFilter.includes("清一色")) {
+    if (mode === "or") {
+      targetYakus = [pick(options.yakuFilter)];
+    } else {
+      targetYakus = options.yakuFilter;
+    }
+  }
+
+  if (targetYakus.length > 0) {
+    if (targetYakus.includes("清一色")) {
       suitLimit = pick(NUM_SUITS);
       pool = pool.filter(t => t[1] === suitLimit);
-    } else if (options.yakuFilter.includes("混一色")) {
+    } else if (targetYakus.includes("混一色")) {
       suitLimit = pick(NUM_SUITS);
       pool = pool.filter(t => t[1] === suitLimit || t[1] === 'z');
-    } else if (options.yakuFilter.includes("タンヤオ")) {
+    } else if (targetYakus.includes("タンヤオ")) {
       pool = TANYAO_TILES;
     }
-    if (options.yakuFilter.includes("役牌")) forceDragon = true;
-    if (options.yakuFilter.includes("平和")) forceShuntsu = true;
+    if (targetYakus.includes("役牌")) forceDragon = true;
+    if (targetYakus.includes("平和")) forceShuntsu = true;
   }
 
   let waitType = "tanki";
@@ -646,7 +658,13 @@ export const generateScoreProblem = (options: ScoreOptions) => {
          
          if (options.yakuFilter.length > 0 && calcResult.yaku) {
            const resultYakuNames = Object.keys(calcResult.yaku);
-           const hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+           const mode = options.yakuFilterMode || "or";
+           let hasMatch = false;
+           if (mode === "or") {
+             hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+           } else {
+             hasMatch = options.yakuFilter.every(y => resultYakuNames.some(ry => ry.includes(y)));
+           }
            if (!hasMatch) { retries++; continue; }
          }
          return { tiles: formattedTenpai, suffix, answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}` };
@@ -669,7 +687,13 @@ export const generateScoreProblem = (options: ScoreOptions) => {
 
       if (options.yakuFilter.length > 0 && calcResult.yaku) {
         const resultYakuNames = Object.keys(calcResult.yaku);
-        const hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+        const mode = options.yakuFilterMode || "or";
+        let hasMatch = false;
+        if (mode === "or") {
+          hasMatch = options.yakuFilter.some(y => resultYakuNames.some(ry => ry.includes(y)));
+        } else {
+          hasMatch = options.yakuFilter.every(y => resultYakuNames.some(ry => ry.includes(y)));
+        }
         if (!hasMatch) { retries++; continue; }
       }
 
