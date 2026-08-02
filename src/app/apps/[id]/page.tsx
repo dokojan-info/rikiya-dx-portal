@@ -21,10 +21,10 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
     return (
         <div className="min-h-screen bg-slate-50/50 py-20 pt-32">
             <div className="container mx-auto px-4 max-w-4xl">
-                {/* 戻るボタン */}
+                {/* 戻るボタン（/appsへ） */}
                 <div className="mb-8">
                     <Link
-                        href="/#apps"
+                        href="/apps"
                         className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-medium"
                     >
                         <ArrowLeft className="w-5 h-5" />
@@ -46,7 +46,7 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                                     className="w-full h-full object-contain"
                                 />
                             ) : (
-                                <div className="text-7xl font-mahjong-color">🀄</div>
+                                <div className="text-7xl">🀄</div>
                             )}
                         </div>
                         <div className="flex-1 text-center md:text-left">
@@ -56,7 +56,7 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                             <p className="text-xl text-slate-600 font-medium mb-6">
                                 {app.description}
                             </p>
-                            
+
                             {/* アクションボタン */}
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 {app.url && (
@@ -95,7 +95,7 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                         </div>
                     </div>
 
-                    {/* 詳細説明エリア */}
+                    {/* 詳細説明エリア（内容は別途追加予定） */}
                     <div className="prose prose-slate max-w-none">
                         <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">
                             アプリの概要
@@ -103,7 +103,7 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                         <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
                             {app.longDescription || app.description}
                         </p>
-                        
+
                         {app.instructions && (
                             <div className="mt-12 p-8 bg-slate-50 rounded-2xl border border-slate-100">
                                 <h3 className="text-xl font-bold text-slate-800 mb-6">使い方・インストール手順</h3>
@@ -112,8 +112,6 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                                 </div>
                             </div>
                         )}
-                        
-                        {/* 将来的に画像や記事を増やす場合はここに追記していく */}
                     </div>
                 </div>
             </div>

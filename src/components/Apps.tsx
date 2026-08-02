@@ -39,7 +39,7 @@ export default function Apps() {
                     {displayApps.map((app) => (
                         <Link
                             key={app.id}
-                            href={`/apps/${app.id}`}
+                            href="/apps"
                             className="group flex flex-col p-6 bg-card rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all"
                         >
                             <div className="mb-4">
@@ -79,4 +79,4 @@ export default function Apps() {
             </div>
         </section>
     );
-}
+}
