@@ -4,7 +4,7 @@ import Parser from "rss-parser";
 
 const NOTE_ACCOUNT_URL = "https://note.com/rikiya_ai";
 const RSS_URL = `${NOTE_ACCOUNT_URL}/rss`;
-const MAX_ARTICLES = 6;
+const MAX_ARTICLES = 3;
 
 type Article = {
     id: string;
