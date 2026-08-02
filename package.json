@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pages:build": "npx --legacy-peer-deps @cloudflare/next-on-pages@1"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -21,6 +22,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
