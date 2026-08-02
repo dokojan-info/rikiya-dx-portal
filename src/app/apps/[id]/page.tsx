@@ -70,17 +70,6 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                                         アプリを開く
                                     </a>
                                 )}
-                                {app.noteUrl && app.noteUrl !== "#" && (
-                                    <a
-                                        href={app.noteUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-8 py-3.5 rounded-xl transition-colors"
-                                    >
-                                        <ExternalLink className="w-5 h-5" />
-                                        使い方を読む
-                                    </a>
-                                )}
                                 {app.downloadUrl && (
                                     <a
                                         href={app.downloadUrl}
@@ -89,6 +78,17 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                                     >
                                         <Download className="w-5 h-5" />
                                         辞書をダウンロードする
+                                    </a>
+                                )}
+                                {app.noteUrl && app.noteUrl !== "#" && (
+                                    <a
+                                        href={app.noteUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-8 py-3.5 rounded-xl transition-colors"
+                                    >
+                                        <ExternalLink className="w-5 h-5" />
+                                        noteの記事はこちら
                                     </a>
                                 )}
                             </div>

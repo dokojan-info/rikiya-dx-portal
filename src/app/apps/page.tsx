@@ -82,17 +82,6 @@ export default function AppsPage() {
                                                     アプリを開く
                                                 </a>
                                             )}
-                                            {app.noteUrl && app.noteUrl !== "#" && (
-                                                <a
-                                                    href={app.noteUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm"
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                    使い方を読む
-                                                </a>
-                                            )}
                                             {app.downloadUrl && (
                                                 <a
                                                     href={app.downloadUrl}
@@ -109,6 +98,17 @@ export default function AppsPage() {
                                             >
                                                 詳細を見る
                                             </Link>
+                                            {app.noteUrl && app.noteUrl !== "#" && (
+                                                <a
+                                                    href={app.noteUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm"
+                                                >
+                                                    <ExternalLink className="w-4 h-4" />
+                                                    noteの記事はこちら
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
