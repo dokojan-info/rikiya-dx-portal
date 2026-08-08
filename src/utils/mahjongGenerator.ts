@@ -994,6 +994,7 @@ export const generateScoreProblem = (options: ScoreOptions) => {
          const riichiInput = isTsumo ? formattedTenpai + lastTile : formattedTenpai + `+${lastTile}`;
 
          const riichi = new Riichi(riichiInput);
+         riichi.disableWyakuman(); // 日本プロ麻雀協会ルール: 純正九蓮宝燈・国士無双十三面待ち等もダブル役満ではなく役満扱い
          const calcResult = riichi.calc();
          if (calcResult.error) { retries++; continue; }
 
@@ -1032,6 +1033,7 @@ export const generateScoreProblem = (options: ScoreOptions) => {
       }
 
       const riichi = new Riichi(p.riichiInput);
+      riichi.disableWyakuman(); // 日本プロ麻雀協会ルール: 四暗刻単騎・大四喜等もダブル役満ではなく役満扱い
       const calcResult = riichi.calc();
 
       if (calcResult.error) { retries++; continue; }
