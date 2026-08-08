@@ -29,6 +29,18 @@ const YAOCHUU_TILES = [
   '1z', '2z', '3z', '4z', '5z', '6z', '7z',
 ];
 
+// 老頭牌（1・9の数牌のみ、字牌を含まない）。清老頭・純全帯么九用
+const TERMINAL_TILES = ['1m', '9m', '1p', '9p', '1s', '9s'];
+
+// 字牌全種。字一色用
+const HONOR_TILES = ['1z', '2z', '3z', '4z', '5z', '6z', '7z'];
+
+// 風牌（東南西北）。小四喜・大四喜用
+const WIND_TILES = ['1z', '2z', '3z', '4z'];
+
+// 緑一色専用牌（索子の2,3,4,6,8 + 發）
+const GREEN_TILES = ['2s', '3s', '4s', '6s', '8s', '6z'];
+
 // ===== ユーティリティ =====
 
 export const parseTilesString = (str: string): string[] => {
@@ -303,6 +315,20 @@ const buildChiitoiHand = (allow4tiles = true): string[] => {
   throw new Error("七対子手牌生成失敗");
 };
 
+// 国士無双: 么九牌13種+そのうち1種の対子(=13面待ちの形で生成)
+const buildKokushiHand = (): string[] => {
+  const pairTile = pick(YAOCHUU_TILES);
+  return [...YAOCHUU_TILES, pairTile];
+};
+
+// 九蓮宝燈: 1112345678999(純正形)+同色1枚
+const buildChuurenHand = (): string[] => {
+  const suit = pick(NUM_SUITS);
+  const base = [1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9].map(n => `${n}${suit}`);
+  const extra = `${randInt(1, 9)}${suit}`;
+  return [...base, extra];
+};
+
 // タンヤオ: 2～8の数牌のみ
 const buildTanyaoHand = (allow4tiles = true): string[] => {
   for (let retry = 0; retry < 500; retry++) {
@@ -482,11 +508,17 @@ export const generateWaitProblem = (options: WaitOptions) => {
 
 type Block = { type: 'shuntsu' | 'koutsu' | 'janto', suit: string, start?: number, tile?: string, isNaki?: boolean, nakiType?: 'chi' | 'pon' | 'minkan' | 'ankan' };
 
+type WaitKind = "tanki" | "nobetan" | "ryanmen" | "shanpon";
+
 const buildCustomScoreProblemInner = (options: ScoreOptions) => {
   let suitLimit: string | undefined = undefined;
   let pool = ALL_TILES;
   let forceDragon = false;
   let forceShuntsu = false;
+  let forceKoutsuAll = false;  // 全面子を刻子に強制(対々和・混老頭・清老頭・字一色)
+  let forceAnkouCount = 0;     // 暗刻をちょうどN個要求(三暗刻=3, 四暗刻=4)
+  let forceAnkanCount = 0;     // 暗槓をちょうどN個要求(三槓子=3, 四槓子=4)
+  let forceChanta = false;     // 么九牌を絡めた順子にする(混全帯么九・純全帯么九)
 
   const mode = options.yakuFilterMode || "or";
   let targetYakus: string[] = [];
@@ -499,6 +531,8 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     }
   }
 
+  const isGreenTarget = targetYakus.includes("緑一色");
+
   if (targetYakus.length > 0) {
     if (targetYakus.includes("清一色")) {
       suitLimit = pick(NUM_SUITS);
@@ -506,19 +540,65 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     } else if (targetYakus.includes("混一色")) {
       suitLimit = pick(NUM_SUITS);
       pool = pool.filter(t => t[1] === suitLimit || t[1] === 'z');
-    } else if (targetYakus.includes("タンヤオ")) {
+    } else if (targetYakus.includes("字一色")) {
+      pool = HONOR_TILES;
+      forceKoutsuAll = true;
+    } else if (isGreenTarget) {
+      pool = GREEN_TILES;
+    } else if (targetYakus.includes("清老頭")) {
+      pool = TERMINAL_TILES;
+      forceKoutsuAll = true;
+    } else if (targetYakus.includes("混老頭")) {
+      pool = YAOCHUU_TILES;
+      forceKoutsuAll = true;
+    } else if (targetYakus.includes("純全帯么九")) {
+      pool = TERMINAL_TILES;
+      forceChanta = true;
+    } else if (targetYakus.includes("混全帯么九")) {
+      pool = YAOCHUU_TILES;
+      forceChanta = true;
+    } else if (targetYakus.includes("断么九")) {
       pool = TANYAO_TILES;
     }
     if (targetYakus.includes("役牌")) forceDragon = true;
     if (targetYakus.includes("平和")) forceShuntsu = true;
+    if (targetYakus.includes("対々和")) forceKoutsuAll = true;
+    if (targetYakus.includes("三暗刻")) forceAnkouCount = 3;
+    if (targetYakus.includes("四暗刻")) forceAnkouCount = 4;
+    if (targetYakus.includes("三槓子")) forceAnkanCount = 3;
+    if (targetYakus.includes("四槓子")) forceAnkanCount = 4;
   }
 
-  let waitType = "tanki";
-  if (options.waitTypes && options.waitTypes.length > 0) {
-    waitType = pick(options.waitTypes);
-  } else {
-    waitType = pick(["tanki", "ryanmen", "shanpon", "nobetan"]);
+  // --- 待ちタイプの決定(役の制約に応じて候補を絞り込む) ---
+  let waitTypePool: WaitKind[] = options.waitTypes && options.waitTypes.length > 0 ? [...options.waitTypes] : ["tanki", "ryanmen", "shanpon", "nobetan"];
+  const restrictWaitTo = (types: WaitKind[]) => {
+    const filtered = waitTypePool.filter(w => types.includes(w));
+    waitTypePool = filtered.length > 0 ? filtered : types;
+  };
+  const excludeWaitType = (types: WaitKind[]) => {
+    const filtered = waitTypePool.filter(w => !types.includes(w));
+    if (filtered.length > 0) waitTypePool = filtered;
+  };
+  // 暗刻/暗槓の個数を厳密に揃えたい役はロンでの明刻化を避けるためtanki固定
+  if (forceAnkouCount > 0 || forceAnkanCount > 0 || targetYakus.includes("二盃口")) {
+    restrictWaitTo(["tanki"]);
+  } else if (forceKoutsuAll || targetYakus.includes("大四喜")) {
+    restrictWaitTo(["tanki", "shanpon"]);
   }
+  // 小三元/小四喜は雀頭を役牌固定にするためtankiだと待ち牌側と衝突するので除外
+  if (targetYakus.includes("小三元") || targetYakus.includes("小四喜")) excludeWaitType(["tanki"]);
+  // チャンタ系/緑一色はnobetanの雀頭側が么九牌・緑牌からズレるため除外
+  if (forceChanta || isGreenTarget) excludeWaitType(["nobetan"]);
+
+  const waitType = pick(waitTypePool);
+
+  // 順子のスート/開始位置(役の制約に応じて選ぶ)
+  const pickShuntsuSuit = (): string => isGreenTarget ? 's' : (suitLimit || pick(NUM_SUITS));
+  const pickShuntsuStart = (): number => {
+    if (forceChanta) return pick([1, 7]); // 123 or 789(么九牌を含む)
+    if (isGreenTarget) return pick([2, 6]); // 234s or 678s(緑牌のみ)
+    return randInt(1, 7);
+  };
 
   const blocks: Block[] = [];
   let winningTile = "";
@@ -528,8 +608,8 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     blocks.push({ type: 'janto', suit: t[1], tile: t });
     winningTile = t;
   } else if (waitType === "ryanmen") {
-    const s = suitLimit || pick(NUM_SUITS);
-    const start = pick([2, 3, 4, 5, 6]);
+    const s = pickShuntsuSuit();
+    const start = (forceChanta || isGreenTarget) ? pickShuntsuStart() : pick([2, 3, 4, 5, 6]);
     blocks.push({ type: 'shuntsu', suit: s, start });
     // 順子の両端いずれかをアガリ牌にする（中央を外すとカンチャンになるため避ける）
     // 例: start側を外す→残りは[start+1,start+2]でstart/start+3待ちの両面
@@ -560,12 +640,78 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     blocks.push({ type: 'janto', suit: t[1], tile: t });
   }
 
-  const forceKoutsu = targetYakus.includes("対々和");
-
   mentsuCount = blocks.filter(b => b.type !== 'janto').length;
 
+  if (targetYakus.includes("二盃口")) {
+    // 4面子すべてを2種類の順子×2組で埋める(門前限定のためtankiに固定済み)
+    const used: { suit: string; start: number }[] = [];
+    while (used.length < 2) {
+      const s = pickShuntsuSuit();
+      const start = pickShuntsuStart();
+      if (!used.some(u => u.suit === s && u.start === start)) used.push({ suit: s, start });
+    }
+    used.forEach(u => {
+      for (let i = 0; i < 2; i++) {
+        if (mentsuCount < 4) {
+          blocks.push({ type: 'shuntsu', suit: u.suit, start: u.start });
+          mentsuCount++;
+        }
+      }
+    });
+  }
+
+  if (targetYakus.includes("三色同刻")) {
+    const n = targetYakus.includes("断么九") ? randInt(2, 8) : randInt(1, 9);
+    ['m', 'p', 's'].forEach(s => {
+      if (mentsuCount < 4) {
+        blocks.push({ type: 'koutsu', suit: s, tile: `${n}${s}` });
+        mentsuCount++;
+      }
+    });
+  }
+
+  if (targetYakus.includes("大三元")) {
+    DRAGON_TILES.forEach(d => {
+      if (mentsuCount < 4) {
+        blocks.push({ type: 'koutsu', suit: 'z', tile: d });
+        mentsuCount++;
+      }
+    });
+  } else if (targetYakus.includes("小三元")) {
+    const dragons = [...DRAGON_TILES];
+    const pairDragon = dragons.splice(randInt(0, dragons.length - 1), 1)[0];
+    dragons.forEach(d => {
+      if (mentsuCount < 4) {
+        blocks.push({ type: 'koutsu', suit: 'z', tile: d });
+        mentsuCount++;
+      }
+    });
+    const jb = blocks.find(b => b.type === 'janto');
+    if (jb) { jb.tile = pairDragon; jb.suit = 'z'; }
+  }
+
+  if (targetYakus.includes("大四喜")) {
+    WIND_TILES.forEach(w => {
+      if (mentsuCount < 4) {
+        blocks.push({ type: 'koutsu', suit: 'z', tile: w });
+        mentsuCount++;
+      }
+    });
+  } else if (targetYakus.includes("小四喜")) {
+    const winds = [...WIND_TILES];
+    const pairWind = winds.splice(randInt(0, winds.length - 1), 1)[0];
+    winds.forEach(w => {
+      if (mentsuCount < 4) {
+        blocks.push({ type: 'koutsu', suit: 'z', tile: w });
+        mentsuCount++;
+      }
+    });
+    const jb = blocks.find(b => b.type === 'janto');
+    if (jb) { jb.tile = pairWind; jb.suit = 'z'; }
+  }
+
   if (targetYakus.includes("三色同順")) {
-    const start = targetYakus.includes("タンヤオ") ? randInt(2, 6) : randInt(1, 7);
+    const start = targetYakus.includes("断么九") ? randInt(2, 6) : randInt(1, 7);
     ['m', 'p', 's'].forEach(s => {
       if (mentsuCount < 4) {
          blocks.push({ type: 'shuntsu', suit: s, start });
@@ -586,7 +732,7 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
 
   if (targetYakus.includes("一盃口")) {
     const s = suitLimit || pick(NUM_SUITS);
-    const start = targetYakus.includes("タンヤオ") ? randInt(2, 6) : randInt(1, 7);
+    const start = targetYakus.includes("断么九") ? randInt(2, 6) : randInt(1, 7);
     for(let i=0; i<2; i++) {
       if (mentsuCount < 4) {
          blocks.push({ type: 'shuntsu', suit: s, start });
@@ -595,17 +741,37 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     }
   }
 
+  let koutsuPlaced = blocks.filter(b => b.type === 'koutsu').length;
+  const koutsuNeeded = forceAnkouCount + forceAnkanCount;
+  // 三暗刻(ちょうど3個)は残りの1面子が偶然刻子になると四暗刻(役満)に化けて
+  // 三暗刻自体がyakuから消えてしまう(riichiライブラリは役満確定後は通常役の判定を打ち切るため)ので、
+  // 4個目は明示的に順子にして刻子化を避ける
+  const capAnkouAtThree = forceAnkouCount === 3;
+
   while (mentsuCount < 4) {
-    if (forceDragon && !blocks.some(b => b.tile && DRAGON_TILES.includes(b.tile))) {
+    if (koutsuNeeded > koutsuPlaced) {
+      const t = pick(pool);
+      blocks.push({ type: 'koutsu', suit: t[1], tile: t });
+      koutsuPlaced++;
+    } else if (capAnkouAtThree && koutsuPlaced >= forceAnkouCount) {
+      blocks.push({ type: 'shuntsu', suit: pickShuntsuSuit(), start: randInt(1, 7) });
+    } else if (forceDragon && !blocks.some(b => b.tile && DRAGON_TILES.includes(b.tile))) {
       const d = pick(DRAGON_TILES);
       blocks.push({ type: 'koutsu', suit: 'z', tile: d });
+    } else if (forceKoutsuAll) {
+      const t = pick(pool);
+      blocks.push({ type: 'koutsu', suit: t[1], tile: t });
     } else if (forceShuntsu) {
       const s = suitLimit || pick(NUM_SUITS);
       const start = randInt(1, 7);
       blocks.push({ type: 'shuntsu', suit: s, start });
-    } else if (forceKoutsu) {
-      const t = pick(pool);
-      blocks.push({ type: 'koutsu', suit: t[1], tile: t });
+    } else if (forceChanta || isGreenTarget) {
+      if (Math.random() < 0.6) {
+        blocks.push({ type: 'shuntsu', suit: pickShuntsuSuit(), start: pickShuntsuStart() });
+      } else {
+        const t = pick(pool);
+        blocks.push({ type: 'koutsu', suit: t[1], tile: t });
+      }
     } else {
       if (Math.random() < 0.6) {
         const s = suitLimit || pick(NUM_SUITS);
@@ -619,8 +785,17 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     mentsuCount++;
   }
 
-  if (options.scoreNakiTypes && options.scoreNakiTypes.length > 0) {
-    const requestedNaki = [...options.scoreNakiTypes];
+  // 三槓子/四槓子は暗槓をちょうどN個自動要求する(ユーザー指定の鳴きと合算)
+  const requestedNakiFromOptions = options.scoreNakiTypes ? [...options.scoreNakiTypes] : [];
+  for (let i = 0; i < forceAnkanCount; i++) requestedNakiFromOptions.push('ankan');
+  // 対々和/混老頭は全面子が刻子だが、4つとも暗刻になると四暗刻(役満)に化けてyakuから消えてしまうため
+  // 1つは明示的にポン(明刻)にして四暗刻化を防ぐ
+  if (targetYakus.includes("対々和") || targetYakus.includes("混老頭")) {
+    requestedNakiFromOptions.push('pon');
+  }
+
+  if (requestedNakiFromOptions.length > 0) {
+    const requestedNaki = requestedNakiFromOptions;
     for (let i = 0; i < blocks.length; i++) {
       if (blocks[i].type === 'janto') continue;
       if (waitType === "nobetan" && i <= 1) continue;
@@ -724,18 +899,31 @@ export const generateScoreProblem = (options: ScoreOptions) => {
 
   while (retries < MAX_RETRIES) {
     try {
+      // 七対子・国士無双・九蓮宝燈はBlock[]構成に乗らないため専用ビルダーで直接生成する
       let isChiitoi = false;
-      if (options.yakuFilter.length > 0 && options.yakuFilter.includes("七対子")) {
-         if (options.yakuFilter.length === 1 || Math.random() < (1 / options.yakuFilter.length)) {
-             isChiitoi = true;
-         }
+      let isKokushi = false;
+      let isChuuren = false;
+      const specialYakuCount = options.yakuFilter.length;
+      if (specialYakuCount > 0) {
+        const specialCandidates: ("chiitoi" | "kokushi" | "chuuren")[] = [];
+        if (options.yakuFilter.includes("七対子")) specialCandidates.push("chiitoi");
+        if (options.yakuFilter.includes("国士無双")) specialCandidates.push("kokushi");
+        if (options.yakuFilter.includes("九蓮宝燈")) specialCandidates.push("chuuren");
+        // 該当する専用ビルダー役がyakuFilter中に占める割合の確率で、その中から1つを公平に選ぶ
+        // (specialCandidates.length === specialYakuCountなら常に専用ビルダー経由になる)
+        if (specialCandidates.length > 0 && Math.random() < specialCandidates.length / specialYakuCount) {
+          const chosen = pick(specialCandidates);
+          isChiitoi = chosen === "chiitoi";
+          isKokushi = chosen === "kokushi";
+          isChuuren = chosen === "chuuren";
+        }
       }
 
-      if (isChiitoi) {
+      if (isChiitoi || isKokushi || isChuuren) {
          if (options.waitTypes && options.waitTypes.length > 0 && !options.waitTypes.includes("tanki")) {
              retries++; continue;
          }
-         const winningHand = buildChiitoiHand(true);
+         const winningHand = isChiitoi ? buildChiitoiHand(true) : isKokushi ? buildKokushiHand() : buildChuurenHand();
          const lastTile = winningHand[winningHand.length - 1];
          const tenpaiHandArr = [...winningHand];
          tenpaiHandArr.pop();
@@ -754,10 +942,12 @@ export const generateScoreProblem = (options: ScoreOptions) => {
          const fu = calcResult.fu || 0;
          const yaku = calcResult.yaku ? Object.keys(calcResult.yaku).join(', ') : '';
          const points = calcResult.ten;
+         // 役満はhan/fuが常に0で返るため(倍率とten/nameは正しく入る)、fu/han範囲チェックはスキップする
+         const isYakuman = (calcResult.yakuman || 0) > 0;
 
-         if (fu < options.minFu || fu > options.maxFu) { retries++; continue; }
-         if (han < options.minHan || han > options.maxHan) { retries++; continue; }
-         
+         if (!isYakuman && (fu < options.minFu || fu > options.maxFu)) { retries++; continue; }
+         if (!isYakuman && (han < options.minHan || han > options.maxHan)) { retries++; continue; }
+
          if (options.yakuFilter.length > 0 && calcResult.yaku) {
            const resultYakuNames = Object.keys(calcResult.yaku);
            const mode = options.yakuFilterMode || "or";
@@ -769,7 +959,10 @@ export const generateScoreProblem = (options: ScoreOptions) => {
            }
            if (!hasMatch) { retries++; continue; }
          }
-         return { tiles: formattedTenpai, suffix, answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}` };
+         const answer = isYakuman
+           ? `${calcResult.name || '役満'} | ${points}点 | 役: ${yaku}`
+           : `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`;
+         return { tiles: formattedTenpai, suffix, answer };
       }
 
       const p = buildCustomScoreProblemInner(options);
@@ -788,9 +981,11 @@ export const generateScoreProblem = (options: ScoreOptions) => {
       const fu = calcResult.fu || 0;
       const yaku = calcResult.yaku ? Object.keys(calcResult.yaku).join(', ') : '';
       const points = calcResult.ten;
+      // 役満はhan/fuが常に0で返るため(倍率とten/nameは正しく入る)、fu/han範囲チェックはスキップする
+      const isYakuman = (calcResult.yakuman || 0) > 0;
 
-      if (fu < options.minFu || fu > options.maxFu) { retries++; continue; }
-      if (han < options.minHan || han > options.maxHan) { retries++; continue; }
+      if (!isYakuman && (fu < options.minFu || fu > options.maxFu)) { retries++; continue; }
+      if (!isYakuman && (han < options.minHan || han > options.maxHan)) { retries++; continue; }
 
       if (options.yakuFilter.length > 0 && calcResult.yaku) {
         const resultYakuNames = Object.keys(calcResult.yaku);
@@ -804,10 +999,13 @@ export const generateScoreProblem = (options: ScoreOptions) => {
         if (!hasMatch) { retries++; continue; }
       }
 
+      const answer = isYakuman
+        ? `${calcResult.name || '役満'} | ${points}点 | 役: ${yaku}`
+        : `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`;
       return {
         tiles: p.formattedTenpai,
         suffix: p.suffix,
-        answer: `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`
+        answer
       };
     } catch {
       retries++;
