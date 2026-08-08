@@ -39,7 +39,53 @@ type QuestionGroup = {
 const WAIT_TITLE = "以下に示した手牌の待ち牌を全て答えよ。";
 const SCORE_TITLE = "以下の手牌の和了点を申告通りに算用数字で答えよ。 ※ドラ、積み棒、リーチは考慮しないこと。";
 
-const AVAILABLE_YAKU_LIST = ["平和", "七対子", "タンヤオ", "役牌", "一盃口", "三色同順", "一気通貫", "混一色", "清一色"];
+// idはmahjongGenerator.ts側の判定に使うriichiライブラリの正式名、labelは画面表示用
+// (「タンヤオ」はライブラリ内部名が「断么九」のため、id/labelを分けている)
+const YAKU_CATEGORIES: { category: string; items: { id: string; label: string }[] }[] = [
+  {
+    category: "部分役",
+    items: [
+      { id: "役牌", label: "役牌" },
+      { id: "一盃口", label: "一盃口" },
+      { id: "二盃口", label: "二盃口" },
+      { id: "三色同順", label: "三色同順" },
+      { id: "三色同刻", label: "三色同刻" },
+      { id: "一気通貫", label: "一気通貫" },
+      { id: "対々和", label: "対々和" },
+      { id: "三暗刻", label: "三暗刻" },
+      { id: "三槓子", label: "三槓子" },
+      { id: "小三元", label: "小三元" },
+    ],
+  },
+  {
+    category: "全体役",
+    items: [
+      { id: "断么九", label: "タンヤオ" },
+      { id: "平和", label: "平和" },
+      { id: "七対子", label: "七対子" },
+      { id: "混一色", label: "混一色" },
+      { id: "清一色", label: "清一色" },
+      { id: "混全帯么九", label: "チャンタ" },
+      { id: "純全帯么九", label: "ジュンチャン" },
+      { id: "混老頭", label: "混老頭" },
+    ],
+  },
+  {
+    category: "役満",
+    items: [
+      { id: "国士無双", label: "国士無双" },
+      { id: "四暗刻", label: "四暗刻" },
+      { id: "大三元", label: "大三元" },
+      { id: "小四喜", label: "小四喜" },
+      { id: "大四喜", label: "大四喜" },
+      { id: "字一色", label: "字一色" },
+      { id: "緑一色", label: "緑一色" },
+      { id: "清老頭", label: "清老頭" },
+      { id: "四槓子", label: "四槓子" },
+      { id: "九蓮宝燈", label: "九蓮宝燈" },
+    ],
+  },
+];
 
 const defaultGroupSettings = (type: "wait" | "score"): Omit<QuestionGroup, "id" | "subQuestions"> => ({
   title: type === "wait" ? WAIT_TITLE : SCORE_TITLE,
@@ -345,21 +391,28 @@ export default function MahjongExamMaker() {
                                         className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors ${group.yakuFilterMode === "and" ? "bg-white shadow-sm text-slate-700" : "text-slate-400 hover:text-slate-600"}`}>AND</button>
                                     </div>
                                   </div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {AVAILABLE_YAKU_LIST.map(yaku => {
-                                      const sel = group.yakuFilter.includes(yaku);
-                                      return (
-                                        <button key={yaku}
-                                          onClick={() => updateGroup(group.id, {
-                                            yakuFilter: sel ? group.yakuFilter.filter(y => y !== yaku) : [...group.yakuFilter, yaku]
+                                  <div className="space-y-1.5">
+                                    {YAKU_CATEGORIES.map(cat => (
+                                      <div key={cat.category} className="flex items-start gap-1.5">
+                                        <span className="text-[9px] font-bold text-slate-400 mt-1 w-9 shrink-0">{cat.category}</span>
+                                        <div className="flex flex-wrap gap-1">
+                                          {cat.items.map(yaku => {
+                                            const sel = group.yakuFilter.includes(yaku.id);
+                                            return (
+                                              <button key={yaku.id}
+                                                onClick={() => updateGroup(group.id, {
+                                                  yakuFilter: sel ? group.yakuFilter.filter(y => y !== yaku.id) : [...group.yakuFilter, yaku.id]
+                                                })}
+                                                className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-all ${
+                                                  sel ? "bg-emerald-100 border-emerald-400 text-emerald-700" : "bg-white border-slate-200 text-slate-400 hover:border-slate-300"
+                                                }`}>
+                                                {yaku.label}
+                                              </button>
+                                            );
                                           })}
-                                          className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-all ${
-                                            sel ? "bg-emerald-100 border-emerald-400 text-emerald-700" : "bg-white border-slate-200 text-slate-400 hover:border-slate-300"
-                                          }`}>
-                                          {yaku}
-                                        </button>
-                                      );
-                                    })}
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
