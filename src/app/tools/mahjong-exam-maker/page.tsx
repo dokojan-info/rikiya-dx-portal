@@ -47,7 +47,7 @@ const defaultGroupSettings = (type: "wait" | "score"): Omit<QuestionGroup, "id" 
   settingMode: "preset",
   presetLevel: 1,
   minWaits: 1, maxWaits: 3, chinitsu: false, allow4tiles: false,
-  yakuFilter: ["平和", "七対子"], yakuFilterMode: "or", minFu: 0, maxFu: 999, minHan: 1, maxHan: 1,
+  yakuFilter: ["平和", "七対子"], yakuFilterMode: "or", minFu: 0, maxFu: 999, minHan: 1, maxHan: 3,
   scoreWaitTypes: ["tanki", "ryanmen", "shanpon", "nobetan"], scoreNakiTypes: [],
 });
 
@@ -195,7 +195,7 @@ export default function MahjongExamMaker() {
 
   const scorePresetLabel = (level: number) => {
     switch (level) {
-      case 1: return "1翻役（平和 / 七対子）ツモ or ロン";
+      case 1: return "平和 / 七対子 ツモ or ロン";
       case 2: return "70符以下";
       case 3: return "80符以上 / 2翻以下";
       default: return "";
