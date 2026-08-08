@@ -325,8 +325,16 @@ const buildChiitoiHand = (allow4tiles = true): string[] => {
 
 // 国士無双: 么九牌13種+そのうち1種の対子(=13面待ちの形で生成)
 const buildKokushiHand = (): string[] => {
-  const pairTile = pick(YAOCHUU_TILES);
-  return [...YAOCHUU_TILES, pairTile];
+  if (Math.random() < 0.5) {
+    // 十三面待ち(ダブル役満): 么九牌13種を1枚ずつ+そのうち1種をもう1枚(対子)
+    const pairTile = pick(YAOCHUU_TILES);
+    return [...YAOCHUU_TILES, pairTile];
+  }
+  // 通常形(役満): 13種のうち1種(アガリ牌)を除いた12種+そのうち1種の対子
+  const missing = pick(YAOCHUU_TILES);
+  const rest = YAOCHUU_TILES.filter(t => t !== missing);
+  const pairTile = pick(rest);
+  return [...rest, pairTile, missing];
 };
 
 // 九蓮宝燈: 1112345678999(純正形)+同色1枚
