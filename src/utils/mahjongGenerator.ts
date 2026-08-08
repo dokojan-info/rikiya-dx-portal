@@ -834,9 +834,32 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     }
   }
 
+  // 牌の物理的な妥当性チェック(同一牌は最大4枚)。
+  // 役牌の刻子強制や么九牌限定プールなど、各ブロックが独立にpool内から乱択されるため、
+  // 雀頭/ターゲット/残り面子が既に確定した刻子と同じ牌を偶然引いて4枚を超えることがある。
+  // 超過していたらこの手牌は不成立として棄却し、呼び出し元のリトライに委ねる。
+  const tileUsage: Record<string, number> = {};
+  for (const b of blocks) {
+    let bt: string[];
+    if (b.type === 'shuntsu') {
+      bt = [`${b.start}${b.suit}`, `${b.start! + 1}${b.suit}`, `${b.start! + 2}${b.suit}`];
+    } else if (b.type === 'janto') {
+      bt = [b.tile!, b.tile!];
+    } else {
+      bt = [b.tile!, b.tile!, b.tile!];
+      if (b.nakiType === 'minkan' || b.nakiType === 'ankan') bt.push(b.tile!);
+    }
+    for (const t of bt) tileUsage[t] = (tileUsage[t] || 0) + 1;
+  }
+  if (Object.values(tileUsage).some(c => c > 4)) {
+    return { riichiInput: "", formattedTenpai: "", suffix: "" };
+  }
+
   const closedTiles: string[] = [];
   let nakiStr = "";
   let nakiVisualStr = "";
+  // アガリ牌をどこかのブロックから間引けたか(間引けないと14枚のはずが15枚になり不正な手牌になる)
+  let winningTileReduced = false;
 
   blocks.forEach((b, i) => {
     let blockTiles: string[] = [];
@@ -853,6 +876,7 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
       if (winIdx !== -1) {
         blockTiles.splice(winIdx, 1);
         closedTiles.push(...blockTiles);
+        winningTileReduced = true;
         return;
       }
     }
@@ -877,6 +901,13 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
       closedTiles.push(...blockTiles);
     }
   });
+
+  // アガリ牌がどのブロックからも間引けていない場合、手牌が1枚多い不正な状態なので棄却する
+  // (雀頭の牌を役牌/風牌で上書きする役(小三元・小四喜)などで、上書き後の牌がwinningTileと
+  //  一致せずi===0/1判定をすり抜けるケースがあるための保険)
+  if (!winningTileReduced) {
+    return { riichiInput: "", formattedTenpai: "", suffix: "" };
+  }
 
   const isTsumo = Math.random() < 0.5;
   const formattedTenpai = formatTilesArray(closedTiles) + nakiVisualStr;
