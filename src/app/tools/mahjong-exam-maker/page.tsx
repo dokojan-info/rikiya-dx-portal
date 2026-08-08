@@ -46,8 +46,6 @@ const YAKU_CATEGORIES: { category: string; items: { id: string; label: string }[
     category: "部分役",
     items: [
       { id: "役牌", label: "役牌" },
-      { id: "断么九", label: "タンヤオ" },
-      { id: "平和", label: "平和" },
       { id: "一盃口", label: "一盃口" },
       { id: "二盃口", label: "二盃口" },
       { id: "三色同順", label: "三色同順" },
@@ -62,6 +60,8 @@ const YAKU_CATEGORIES: { category: string; items: { id: string; label: string }[
   {
     category: "全体役",
     items: [
+      { id: "断么九", label: "タンヤオ" },
+      { id: "平和", label: "平和" },
       { id: "七対子", label: "七対子" },
       { id: "混一色", label: "混一色" },
       { id: "清一色", label: "清一色" },
