@@ -337,12 +337,24 @@ const buildKokushiHand = (): string[] => {
   return [...rest, pairTile, missing];
 };
 
-// 九蓮宝燈: 1112345678999(純正形)+同色1枚
+// 九蓮宝燈: 1112345678999(9面待ち)の形は、どの牌で上がっても数学的に必ず
+// 純正九蓮宝燈(その牌がテンパイ形の時点で2枚or4枚になるため)になってしまうので、
+// 通常形(2~8のどれか1つを欠番にして単騎待ちさせ、非重複牌で上がる)も半々で生成する
 const buildChuurenHand = (): string[] => {
   const suit = pick(NUM_SUITS);
-  const base = [1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9].map(n => `${n}${suit}`);
-  const extra = `${randInt(1, 9)}${suit}`;
-  return [...base, extra];
+  if (Math.random() < 0.5) {
+    // 純正九蓮宝燈(ダブル役満): 1112345678999(9面待ち)+同色1枚
+    const base = [1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9].map(n => `${n}${suit}`);
+    const extra = `${randInt(1, 9)}${suit}`;
+    return [...base, extra];
+  }
+  // 通常九蓮宝燈(役満): 2~8のうち1つを欠番にして単騎待ちにする
+  const middleNumbers = [2, 3, 4, 5, 6, 7, 8];
+  const missing = pick(middleNumbers);
+  const present = middleNumbers.filter(n => n !== missing);
+  const dupTarget = pick(present);
+  const tenpaiNumbers = [1, 1, 1, 9, 9, 9, ...present, dupTarget];
+  return [...tenpaiNumbers.map(n => `${n}${suit}`), `${missing}${suit}`];
 };
 
 // タンヤオ: 2～8の数牌のみ
