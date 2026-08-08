@@ -112,8 +112,16 @@ export const scorePresetToOptions = (level: 1 | 2 | 3): ScoreOptions => {
     // 平和(ロン1翻/ツモ2翻)・七対子(ロン2翻/ツモ3翻)をすべて許容する範囲
     case 1: return { mode: "preset", presetLevel: 1, yakuFilter: ["平和", "七対子"], minFu: 0, maxFu: 999, minHan: 1, maxHan: 3 };
     case 2: return { mode: "preset", presetLevel: 2, yakuFilter: [], minFu: 0, maxFu: 70, minHan: 1, maxHan: 99 };
-    // 80符以上は么九牌の暗槓なしでは到達困難なため暗槓を必須にする（1つだとロンでギリギリ80符・ツモは届かないため2つ要求）
-    case 3: return { mode: "preset", presetLevel: 3, yakuFilter: [], minFu: 80, maxFu: 999, minHan: 1, maxHan: 2, scoreNakiTypes: ['ankan', 'ankan'] };
+    // 80符以上は么九牌の暗槓なしでは到達困難なため暗槓を必須にするが、
+    // 常に暗槓2つの同じ形になって単調にならないよう、暗槓の数をランダムに変える
+    // (1つ: ロン中心のシンプルな答え / 2つ: ツモロンバランス型 / 3つ: 四暗刻等の役満に化けやすいボーナス型)
+    case 3: {
+      const ankanCount = pick([1, 2, 2, 3] as const); // 2つを基本としつつ1つ・3つも混ぜる
+      return {
+        mode: "preset", presetLevel: 3, yakuFilter: [], minFu: 80, maxFu: 999, minHan: 1, maxHan: 2,
+        scoreNakiTypes: Array.from({ length: ankanCount }, () => 'ankan' as const),
+      };
+    }
   }
 };
 
