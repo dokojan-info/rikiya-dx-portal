@@ -23,6 +23,12 @@ NUM_SUITS.forEach((suit) => {
 // 役牌（三元牌: 白發中）
 const DRAGON_TILES = ['5z', '6z', '7z'];
 
+// 么九牌（老頭牌: 1・9の数牌 + 字牌全種）。暗槓の高符数化に使用
+const YAOCHUU_TILES = [
+  '1m', '9m', '1p', '9p', '1s', '9s',
+  '1z', '2z', '3z', '4z', '5z', '6z', '7z',
+];
+
 // ===== ユーティリティ =====
 
 export const parseTilesString = (str: string): string[] => {
@@ -91,9 +97,11 @@ export const waitPresetToOptions = (level: 1 | 2 | 3): WaitOptions => {
 
 export const scorePresetToOptions = (level: 1 | 2 | 3): ScoreOptions => {
   switch (level) {
-    case 1: return { mode: "preset", presetLevel: 1, yakuFilter: ["平和", "七対子"], minFu: 0, maxFu: 999, minHan: 1, maxHan: 1 };
+    // 平和(ロン1翻/ツモ2翻)・七対子(ロン2翻/ツモ3翻)をすべて許容する範囲
+    case 1: return { mode: "preset", presetLevel: 1, yakuFilter: ["平和", "七対子"], minFu: 0, maxFu: 999, minHan: 1, maxHan: 3 };
     case 2: return { mode: "preset", presetLevel: 2, yakuFilter: [], minFu: 0, maxFu: 70, minHan: 1, maxHan: 99 };
-    case 3: return { mode: "preset", presetLevel: 3, yakuFilter: [], minFu: 80, maxFu: 999, minHan: 1, maxHan: 2 };
+    // 80符以上は么九牌の暗槓なしでは到達困難なため暗槓を必須にする（1つだとロンでギリギリ80符・ツモは届かないため2つ要求）
+    case 3: return { mode: "preset", presetLevel: 3, yakuFilter: [], minFu: 80, maxFu: 999, minHan: 1, maxHan: 2, scoreNakiTypes: ['ankan', 'ankan'] };
   }
 };
 
@@ -233,6 +241,28 @@ const buildGenericHand = (suitLimit?: string, allow4tiles = true): string[] => {
     if (isValidHandTiles(tiles, allow4tiles)) return tiles;
   }
   throw new Error("手牌生成失敗");
+};
+
+// 4枚使い必須: 同じ牌が必ず4枚（刻子3枚+順子内1枚）含まれる手牌を生成
+const buildForced4Hand = (suitLimit?: string): string[] => {
+  for (let retry = 0; retry < 500; retry++) {
+    const suit = suitLimit || pick(NUM_SUITS);
+    const n = randInt(2, 8); // 両側に順子を作れる範囲
+    const forcedTile = `${n}${suit}`;
+    const koutsu = [forcedTile, forcedTile, forcedTile];
+    const shuntsu = [`${n - 1}${suit}`, forcedTile, `${n + 1}${suit}`];
+
+    const restPool = (suitLimit ? ALL_TILES.filter(t => t[1] === suitLimit) : ALL_TILES);
+    const head = randomHead(restPool);
+    const mentsu: string[] = [];
+    for (let i = 0; i < 2; i++) mentsu.push(...randomMentsu(0.6, suitLimit));
+
+    const tiles = [...head, ...koutsu, ...shuntsu, ...mentsu];
+    // forcedTileがちょうど4枚（他の牌も4枚以内）であることを検証
+    if (tiles.filter(t => t === forcedTile).length !== 4) continue;
+    if (isValidHandTiles(tiles, true)) return tiles;
+  }
+  throw new Error("4枚使い手牌生成失敗");
 };
 
 // 平和: 順子4つ + 非役牌の雀頭
@@ -419,7 +449,10 @@ export const generateWaitProblem = (options: WaitOptions) => {
   while (retries < MAX_RETRIES) {
     let winningHand: string[];
     try {
-      winningHand = buildGenericHand(suitLimit, effectiveOptions.allow4tiles);
+      // 「4枚使い」ONの場合は同じ牌が必ず4枚使われる形を強制生成する
+      winningHand = effectiveOptions.allow4tiles
+        ? buildForced4Hand(suitLimit)
+        : buildGenericHand(suitLimit, effectiveOptions.allow4tiles);
     } catch {
       retries++;
       continue;
@@ -498,7 +531,10 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
     const s = suitLimit || pick(NUM_SUITS);
     const start = pick([2, 3, 4, 5, 6]);
     blocks.push({ type: 'shuntsu', suit: s, start });
-    winningTile = Math.random() < 0.5 ? `${start - 1}${s}` : `${start + 3}${s}`;
+    // 順子の両端いずれかをアガリ牌にする（中央を外すとカンチャンになるため避ける）
+    // 例: start側を外す→残りは[start+1,start+2]でstart/start+3待ちの両面
+    //     start+2側を外す→残りは[start,start+1]でstart-1/start+2待ちの両面
+    winningTile = Math.random() < 0.5 ? `${start}${s}` : `${start + 2}${s}`;
   } else if (waitType === "shanpon") {
     const t = pick(pool);
     blocks.push({ type: 'koutsu', suit: t[1], tile: t });
@@ -603,6 +639,18 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
            const type = pick(koutsuNakis) as 'pon' | 'minkan' | 'ankan';
            blocks[i].nakiType = type;
            requestedNaki.splice(requestedNaki.indexOf(type), 1);
+           if (type === 'ankan') {
+             // 暗槓は高符数（32符）を狙うため么九牌に強制する
+             let yaochuuPool = YAOCHUU_TILES.filter(t => pool.includes(t));
+             if (yaochuuPool.length === 0) {
+               yaochuuPool = suitLimit ? YAOCHUU_TILES.filter(t => t[1] === suitLimit || t[1] === 'z') : YAOCHUU_TILES;
+             }
+             if (yaochuuPool.length > 0) {
+               const forcedTile = pick(yaochuuPool);
+               blocks[i].tile = forcedTile;
+               blocks[i].suit = forcedTile[1];
+             }
+           }
         }
       }
     }
@@ -646,6 +694,7 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
         nakiVisualStr += `　${blockTiles[0]}-${blockTiles[1][0]}${blockTiles[2][0]}${blockTiles[3][0]}${suit}`;
       } else if (b.nakiType === 'ankan') {
+        // riichiライブラリの仕様: 暗槓は「同じ牌2桁」の省略記法で表現する(4桁だと明槓と誤認識される)
         nakiStr += `+${blockTiles[0][0]}${blockTiles[1][0]}${suit}`;
         nakiVisualStr += `　0z${blockTiles[0][0]}${blockTiles[1][0]}${suit}0z`;
       }
@@ -656,8 +705,12 @@ const buildCustomScoreProblemInner = (options: ScoreOptions) => {
 
   const isTsumo = Math.random() < 0.5;
   const formattedTenpai = formatTilesArray(closedTiles) + nakiVisualStr;
-  const riichiInput = formatTilesArray(closedTiles) + nakiStr + winningTile;
-  
+  // riichiライブラリの仕様: アガリ牌を素で連結=ツモ、"+アガリ牌"で区切る=ロン
+  // (副露がある場合はアガリ牌を独立した"+"区切りにしないと副露側の記法まで壊れる)
+  const riichiInput = isTsumo
+    ? formatTilesArray(closedTiles) + winningTile + nakiStr
+    : formatTilesArray(closedTiles) + `+${winningTile}` + nakiStr;
+
   return {
     riichiInput,
     formattedTenpai,
@@ -690,8 +743,9 @@ export const generateScoreProblem = (options: ScoreOptions) => {
          const formattedTenpai = formatTilesArray(tenpaiHandArr);
          const isTsumo = Math.random() < 0.5;
          const suffix = `${lastTile} ${isTsumo ? 'ツモ' : 'ロン'}`;
-         const riichiInput = formattedTenpai + lastTile;
-         
+         // riichiライブラリの仕様: アガリ牌を素で連結=ツモ、"+アガリ牌"で区切る=ロン
+         const riichiInput = isTsumo ? formattedTenpai + lastTile : formattedTenpai + `+${lastTile}`;
+
          const riichi = new Riichi(riichiInput);
          const calcResult = riichi.calc();
          if (calcResult.error) { retries++; continue; }
