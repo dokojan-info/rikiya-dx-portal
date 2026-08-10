@@ -134,6 +134,8 @@ export default function MahjongExamMaker() {
   const [groups, setGroups] = useState<QuestionGroup[]>([]);
   const [generatingGroupId, setGeneratingGroupId] = useState<string>("");
   const [expandedSettings, setExpandedSettings] = useState<Record<string, boolean>>({});
+  const [includeBlankAnswerSheet, setIncludeBlankAnswerSheet] = useState(true);
+  const [includeAnswerKey, setIncludeAnswerKey] = useState(true);
 
   // 大問追加
   const addGroup = (type: "wait" | "score") => {
@@ -250,6 +252,40 @@ export default function MahjongExamMaker() {
 
   const isWait = (g: QuestionGroup) => g.problemType === "wait";
 
+  // 解答用紙（白紙）／解答（正答入り）を同じレイアウトで生成する
+  // (採点時に見比べやすいよう、両ページの見た目を揃えている)
+  const renderAnswerSheet = (title: string, showAnswers: boolean) => (
+    <div className="hidden print:block print:break-before-page bg-white p-8 sm:p-12 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none print:p-0 text-black">
+      <h2 className="text-2xl font-bold text-center mb-10 print:mb-8 print:text-xl text-slate-800 print:text-black">{title}</h2>
+
+      <div className="space-y-8 print:space-y-6">
+        {groups.filter(g => g.subQuestions.length > 0).map((group, groupIndex) => (
+          <div key={group.id} className="break-inside-avoid">
+            <h3 className="text-lg print:text-base font-bold text-slate-900 mb-3 print:mb-2">
+              問題{groupIndex + 1}
+            </h3>
+            <div className="pl-4 print:pl-6 space-y-2 print:space-y-1">
+              {group.subQuestions.map((sub, subIndex) => (
+                <div key={sub.id} className="flex items-baseline gap-2">
+                  <span className="font-bold text-slate-800 print:text-black text-base print:text-sm w-10 shrink-0">
+                    （{subIndex + 1}）
+                  </span>
+                  {showAnswers ? (
+                    <span className="text-base print:text-sm text-slate-700 print:text-black whitespace-pre-wrap">
+                      {sub.answer || "（未設定）"}
+                    </span>
+                  ) : (
+                    <span className="inline-block border-b border-slate-400 w-40 h-5 print:w-56" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans print:bg-white">
       <Header />
@@ -269,10 +305,24 @@ export default function MahjongExamMaker() {
                   </span>
                 </p>
               </div>
-              <button onClick={handlePrint}
-                className="flex-shrink-0 flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-xl hover:bg-slate-700 transition-colors font-medium shadow-sm">
-                <Printer className="w-5 h-5" /> 印刷する
-              </button>
+              <div className="flex flex-col items-start sm:items-end gap-2 flex-shrink-0">
+                <button onClick={handlePrint}
+                  className="flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-xl hover:bg-slate-700 transition-colors font-medium shadow-sm">
+                  <Printer className="w-5 h-5" /> 印刷する
+                </button>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500">
+                  <input type="checkbox" checked={includeBlankAnswerSheet}
+                    onChange={(e) => setIncludeBlankAnswerSheet(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded border-slate-300 text-primary" />
+                  解答用紙（白紙）を追加する
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500">
+                  <input type="checkbox" checked={includeAnswerKey}
+                    onChange={(e) => setIncludeAnswerKey(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded border-slate-300 text-primary" />
+                  解答（正答入り）を追加する
+                </label>
+              </div>
             </div>
 
             {/* 大問一覧 */}
@@ -618,6 +668,10 @@ export default function MahjongExamMaker() {
               </div>
             )}
           </div>
+
+          {/* 解答用紙（白紙）／解答（正答入り）（画面には表示せず、印刷時のみ別ページとして出力） */}
+          {includeBlankAnswerSheet && groups.some(g => g.subQuestions.length > 0) && renderAnswerSheet("解答用紙", false)}
+          {includeAnswerKey && groups.some(g => g.subQuestions.some(q => q.answer)) && renderAnswerSheet("解答", true)}
 
         </div>
       </main>
