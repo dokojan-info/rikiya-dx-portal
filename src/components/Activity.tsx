@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, MonitorPlay, ArrowRight, Sparkles } from "lucide-react";
+import { CalendarDays, MonitorPlay, ArrowRight, Sparkles, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useSide } from "@/context/SideContext";
 
@@ -31,7 +31,10 @@ export default function Activity() {
                         </Link>
 
                         {/* 日本プロ麻雀協会 広島支部 カード（リンク化） */}
-                        <Link href="/activities/japan-pro-mahjong" className="group bg-card p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col hover:border-green-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        <Link href="/activities/japan-pro-mahjong" className="group relative bg-card p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col hover:border-green-200 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            <div className="absolute top-4 right-4 inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                <Trophy className="w-3 h-3" /> 發王戦 準優勝
+                            </div>
                             <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors">
                                 <CalendarDays className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
                             </div>

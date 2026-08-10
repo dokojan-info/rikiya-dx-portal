@@ -81,6 +81,15 @@ export default function JapanProMahjongPage() {
                                 定期的な大会開催を通じて、地域の競技麻雀コミュニティの活性化に貢献しています。
                             </p>
                             <div className="space-y-4">
+                                <div className="bg-white rounded-xl p-4 shadow-sm flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shrink-0 shadow-sm">
+                                        <Trophy className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800">第31期 發王戦 準優勝</h4>
+                                        <p className="text-xs text-slate-500">個人タイトル戦</p>
+                                    </div>
+                                </div>
                                 <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
                                     <h4 className="font-bold text-white mb-1">協会広島プロアマシリーズ</h4>
                                     <p className="text-xs text-green-100">継続的な企画・運営</p>

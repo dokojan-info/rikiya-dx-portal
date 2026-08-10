@@ -50,11 +50,11 @@ export default function Profile() {
                                         </div>
                                         <span>日本プロ麻雀協会所属</span>
                                     </li>
-                                    <li className="flex items-center gap-3 text-slate-600">
-                                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                            <Trophy className="w-5 h-5 text-yellow-500" />
+                                    <li className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl px-4 py-3">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shrink-0 shadow-sm">
+                                            <Trophy className="w-5 h-5 text-white" />
                                         </div>
-                                        <span>第31期 發王戦 準優勝</span>
+                                        <span className="font-bold text-amber-900">第31期 發王戦 準優勝</span>
                                     </li>
                                 </>
                             ) : (
