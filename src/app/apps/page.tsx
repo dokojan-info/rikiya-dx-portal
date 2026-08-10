@@ -72,15 +72,25 @@ export default function AppsPage() {
                                         {/* アクションボタン */}
                                         <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                                             {app.url && (
-                                                <a
-                                                    href={app.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white font-semibold px-6 py-2.5 rounded-xl transition-all shadow-sm text-sm"
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                    アプリを開く
-                                                </a>
+                                                app.url.startsWith("/") ? (
+                                                    <Link
+                                                        href={app.url}
+                                                        className="inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white font-semibold px-6 py-2.5 rounded-xl transition-all shadow-sm text-sm"
+                                                    >
+                                                        <ExternalLink className="w-4 h-4" />
+                                                        アプリを開く
+                                                    </Link>
+                                                ) : (
+                                                    <a
+                                                        href={app.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white font-semibold px-6 py-2.5 rounded-xl transition-all shadow-sm text-sm"
+                                                    >
+                                                        <ExternalLink className="w-4 h-4" />
+                                                        アプリを開く
+                                                    </a>
+                                                )
                                             )}
                                             {app.downloadUrl && (
                                                 <a
