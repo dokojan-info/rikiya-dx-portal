@@ -74,6 +74,33 @@ export const formatTilesArray = (tiles: string[]): string => {
   return result;
 };
 
+// 解答表記用の牌記号
+// 萬子: 漢数字 / 筒子: 丸数字 / 索子: 算用数字 / 字牌: 東=T,南=N,發=R,他はそのまま
+const MANZU_KANJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九'];
+const PINZU_CIRCLED = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
+const SOUZU_ARABIC = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const HONOR_SYMBOLS: Record<string, string> = {
+  '1z': 'T', '2z': 'N', '3z': '西', '4z': '北', '5z': '白', '6z': 'R', '7z': '中',
+};
+
+// 解答欄用に牌記号表記へ変換する（萬子→筒子→索子→字牌の順、同一種内は昇順）
+// 字牌はHONOR_SYMBOLSのキー順（東南西北白發中）＝索引の昇順と一致するため追加のソートは不要
+export const formatAnswerTiles = (tiles: string[]): string => {
+  const suitOrder: Record<string, number> = { m: 1, p: 2, s: 3, z: 4 };
+  const sorted = [...tiles].sort((a, b) => {
+    if (suitOrder[a[1]] !== suitOrder[b[1]]) return suitOrder[a[1]] - suitOrder[b[1]];
+    return parseInt(a[0], 10) - parseInt(b[0], 10);
+  });
+  return sorted.map((tile) => {
+    const num = parseInt(tile[0], 10);
+    const suit = tile[1];
+    if (suit === 'm') return MANZU_KANJI[num - 1];
+    if (suit === 'p') return PINZU_CIRCLED[num - 1];
+    if (suit === 's') return SOUZU_ARABIC[num - 1];
+    return HONOR_SYMBOLS[tile] ?? tile;
+  }).join('');
+};
+
 // ===== オプション型定義 =====
 
 export type WaitOptions = {
@@ -524,7 +551,7 @@ export const generateWaitProblem = (options: WaitOptions) => {
         return {
           tiles: formattedStr,
           suffix: "",
-          answer: `待ち: ${formatTilesArray(waits)} (${machiCount}面待ち)`
+          answer: formatAnswerTiles(waits)
         };
       }
     }
@@ -1020,8 +1047,8 @@ export const generateScoreProblem = (options: ScoreOptions) => {
            if (!hasMatch) { retries++; continue; }
          }
          const answer = isYakuman
-           ? `${calcResult.name || '役満'} | ${points}点 | 役: ${yaku}`
-           : `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`;
+           ? `${points}点（${calcResult.name || '役満'}）`
+           : `${points}点（${fu}符${han}翻　${yaku}）`;
          return { tiles: formattedTenpai, suffix, answer };
       }
 
@@ -1061,8 +1088,8 @@ export const generateScoreProblem = (options: ScoreOptions) => {
       }
 
       const answer = isYakuman
-        ? `${calcResult.name || '役満'} | ${points}点 | 役: ${yaku}`
-        : `${han}翻 ${fu}符 | ${points}点 | 役: ${yaku}`;
+        ? `${points}点（${calcResult.name || '役満'}）`
+        : `${points}点（${fu}符${han}翻　${yaku}）`;
       return {
         tiles: p.formattedTenpai,
         suffix: p.suffix,
