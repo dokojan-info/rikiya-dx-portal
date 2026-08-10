@@ -120,7 +120,7 @@ const FormattedText = ({ text }: { text: string }) => {
       elements.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex, match.index)}</span>);
     }
     elements.push(
-      <span key={`tiles-${match.index}`} className="font-mahjong-color text-[1.8em] leading-none inline-block align-middle mx-0.5 translate-y-[-3px]">
+      <span key={`tiles-${match.index}`} className="font-mahjong-color text-5xl print:text-4xl leading-none inline-block align-middle mx-0.5">
         {expandTiles(match[0])}
       </span>
     );
