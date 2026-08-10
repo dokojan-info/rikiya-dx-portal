@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { apps } from "../data/apps";
 import { useSide } from "@/context/SideContext";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 // トップページに表示する最大件数
 const MAX_DISPLAY = 3;
@@ -29,9 +29,10 @@ export default function Apps() {
                     </div>
                     <Link
                         href="/apps"
-                        className="hidden md:flex items-center gap-2 text-primary font-medium hover:opacity-80 transition-colors"
+                        className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 px-5 py-2.5 rounded-full transition-all hover:shadow-sm"
                     >
-                        アプリ一覧を見る <ExternalLink className="w-4 h-4" />
+                        アプリ一覧を見る
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </div>
 
@@ -39,7 +40,7 @@ export default function Apps() {
                     {displayApps.map((app) => (
                         <Link
                             key={app.id}
-                            href="/apps"
+                            href={`/apps/${app.id}`}
                             className="group flex flex-col p-6 bg-card rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all"
                         >
                             <div className="mb-4">
@@ -71,9 +72,10 @@ export default function Apps() {
                 <div className="mt-8 text-center md:hidden">
                     <Link
                         href="/apps"
-                        className="inline-flex items-center gap-2 text-primary font-bold bg-primary/10 px-6 py-3 rounded-xl hover:bg-primary/20 transition-colors"
+                        className="group inline-flex items-center gap-2 text-primary font-bold bg-primary/10 hover:bg-primary/20 border border-primary/20 px-6 py-3 rounded-full transition-all hover:shadow-sm"
                     >
-                        <ExternalLink className="w-5 h-5" /> アプリ一覧を見る
+                        アプリ一覧を見る
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </div>
             </div>

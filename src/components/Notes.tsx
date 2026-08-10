@@ -90,9 +90,10 @@ export default async function Notes() {
                         href={NOTE_ACCOUNT_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hidden md:flex items-center gap-2 text-primary font-medium hover:opacity-80 transition-colors"
+                        className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 px-5 py-2.5 rounded-full transition-all hover:shadow-sm"
                     >
-                        note一覧を見る <ExternalLink className="w-4 h-4" />
+                        note一覧を見る
+                        <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
                 </div>
 
@@ -139,9 +140,10 @@ export default async function Notes() {
                         href={NOTE_ACCOUNT_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-primary font-bold bg-primary/10 px-6 py-3 rounded-xl hover:bg-primary/20 transition-colors"
+                        className="group inline-flex items-center gap-2 text-primary font-bold bg-primary/10 hover:bg-primary/20 border border-primary/20 px-6 py-3 rounded-full transition-all hover:shadow-sm"
                     >
-                        <Edit3 className="w-5 h-5" /> note一覧を見る
+                        <Edit3 className="w-5 h-5" />
+                        note一覧を見る
                     </a>
                 </div>
             </div>
