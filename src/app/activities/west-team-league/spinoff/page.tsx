@@ -25,9 +25,9 @@ export default function WestTeamLeagueSpinoffPage() {
                     {/* 戻るボタン */}
                     <Link
                         href="/activities/west-team-league"
-                        className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary mb-8 transition-colors"
+                        className="group inline-flex items-center gap-2 text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-full mb-8 transition-all hover:shadow-sm hover:border-slate-300"
                     >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                         西日本TEAMリーグ ページへ戻る
                     </Link>
 
