@@ -135,37 +135,34 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                             <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
                                 {app.longDescription || app.description}
                             </p>
+
+                            {app.features && app.features.length > 0 && (
+                                <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 list-none pl-0">
+                                    {app.features.map((feature) => (
+                                        <li
+                                            key={feature}
+                                            className="flex items-start gap-3 bg-slate-50 border border-slate-100 rounded-xl p-4 m-0"
+                                        >
+                                            <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                                            <span className="text-slate-700 text-base leading-snug">{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
 
-                        {/* 詳細（特徴・使い方） */}
-                        {((app.features && app.features.length > 0) || app.instructions) && (
+                        {/* 詳細（使い方） */}
+                        {app.instructions && (
                             <div className="prose prose-slate max-w-none mt-12">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">
                                     詳細
                                 </h2>
-
-                                {app.features && app.features.length > 0 && (
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 list-none pl-0 m-0">
-                                        {app.features.map((feature) => (
-                                            <li
-                                                key={feature}
-                                                className="flex items-start gap-3 bg-slate-50 border border-slate-100 rounded-xl p-4 m-0"
-                                            >
-                                                <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                                                <span className="text-slate-700 text-base leading-snug">{feature}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
-                                {app.instructions && (
-                                    <div className="mt-8 p-8 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <h3 className="text-xl font-bold text-slate-800 mb-6">使い方・インストール手順</h3>
-                                        <div className="text-slate-600 leading-relaxed whitespace-pre-wrap">
-                                            {app.instructions}
-                                        </div>
+                                <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <h3 className="text-xl font-bold text-slate-800 mb-6">使い方・インストール手順</h3>
+                                    <div className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                        {app.instructions}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         )}
                     </div>
