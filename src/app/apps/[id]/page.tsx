@@ -127,10 +127,10 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                             </div>
                         </div>
 
-                        {/* 詳細説明エリア */}
+                        {/* アプリ概要 */}
                         <div className="prose prose-slate max-w-none">
                             <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">
-                                アプリの概要
+                                アプリ概要
                             </h2>
                             <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
                                 {app.longDescription || app.description}
@@ -149,22 +149,28 @@ export default function AppDetailPage({ params }: { params: { id: string } }) {
                                     ))}
                                 </ul>
                             )}
+                        </div>
 
-                            {app.instructions && (
-                                <div className="mt-12 p-8 bg-slate-50 rounded-2xl border border-slate-100">
+                        {/* 詳細（使い方） */}
+                        {app.instructions && (
+                            <div className="prose prose-slate max-w-none mt-12">
+                                <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">
+                                    詳細
+                                </h2>
+                                <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100">
                                     <h3 className="text-xl font-bold text-slate-800 mb-6">使い方・インストール手順</h3>
                                     <div className="text-slate-600 leading-relaxed whitespace-pre-wrap">
                                         {app.instructions}
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
 
-                    {/* 関連アプリ */}
+                    {/* 他のアプリ */}
                     {relatedApps.length > 0 && (
                         <div className="mt-12">
-                            <h2 className="text-2xl font-bold text-foreground mb-6">こちらのアプリもおすすめ</h2>
+                            <h2 className="text-2xl font-bold text-foreground mb-6">他のアプリ</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {relatedApps.map((related) => (
                                     <Link
