@@ -71,16 +71,17 @@ export default function JapanProMahjongPage() {
                             </div>
                         </div>
 
-                        {/* 実績・ハイライト */}
-                        <div className="bg-gradient-to-br from-green-600 to-emerald-700 rounded-3xl p-8 shadow-md text-white">
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <Trophy className="w-5 h-5 text-yellow-300" />
-                                運営実績
-                            </h3>
-                            <p className="text-green-100 text-sm leading-relaxed mb-6">
-                                定期的な大会開催を通じて、地域の競技麻雀コミュニティの活性化に貢献しています。
-                            </p>
-                            <div className="space-y-4">
+                        {/* 個人成績・運営実績 */}
+                        <div className="flex flex-col gap-8">
+                            {/* 個人成績（プロ選手としての対局成績） */}
+                            <div className="bg-gradient-to-br from-amber-400 to-yellow-500 rounded-3xl p-8 shadow-md text-white">
+                                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                    <Trophy className="w-5 h-5 text-white" />
+                                    個人成績
+                                </h3>
+                                <p className="text-yellow-50 text-sm leading-relaxed mb-6">
+                                    選手として出場した個人タイトル戦での成績です。
+                                </p>
                                 <div className="bg-white rounded-xl p-4 shadow-sm flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shrink-0 shadow-sm">
                                         <Trophy className="w-5 h-5 text-white" />
@@ -90,13 +91,26 @@ export default function JapanProMahjongPage() {
                                         <p className="text-xs text-slate-500">個人タイトル戦</p>
                                     </div>
                                 </div>
-                                <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-                                    <h4 className="font-bold text-white mb-1">協会広島プロアマシリーズ</h4>
-                                    <p className="text-xs text-green-100">継続的な企画・運営</p>
-                                </div>
-                                <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-                                    <h4 className="font-bold text-white mb-1">ゲスト活動等　</h4>
-                                    <p className="text-xs text-green-100">紅葉麻雀同好会などのゲストとして麻雀のコツを伝授</p>
+                            </div>
+
+                            {/* 運営実績 */}
+                            <div className="bg-gradient-to-br from-green-600 to-emerald-700 rounded-3xl p-8 shadow-md text-white">
+                                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-green-100" />
+                                    運営実績
+                                </h3>
+                                <p className="text-green-100 text-sm leading-relaxed mb-6">
+                                    定期的な大会開催を通じて、地域の競技麻雀コミュニティの活性化に貢献しています。
+                                </p>
+                                <div className="space-y-4">
+                                    <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                                        <h4 className="font-bold text-white mb-1">協会広島プロアマシリーズ</h4>
+                                        <p className="text-xs text-green-100">継続的な企画・運営</p>
+                                    </div>
+                                    <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                                        <h4 className="font-bold text-white mb-1">ゲスト活動等　</h4>
+                                        <p className="text-xs text-green-100">紅葉麻雀同好会などのゲストとして麻雀のコツを伝授</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
