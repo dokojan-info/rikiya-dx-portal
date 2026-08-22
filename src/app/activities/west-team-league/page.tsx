@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import SeasonPhotoGallery from "@/components/SeasonPhotoGallery";
+import GroupedPhotoGallery from "@/components/GroupedPhotoGallery";
 import { getWestTeamLeaguePhotosBySeason } from "@/data/westTeamLeaguePhotos";
 import { ArrowLeft, Trophy, Users, History, FileText, Sparkles, Camera } from "lucide-react";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export default function WestTeamLeaguePage() {
                                 </div>
                                 <h2 className="text-2xl font-bold text-slate-800">活動の様子</h2>
                             </div>
-                            <SeasonPhotoGallery seasons={westTeamLeaguePhotosBySeason} />
+                            <GroupedPhotoGallery groups={westTeamLeaguePhotosBySeason} />
                         </div>
                     )}
 

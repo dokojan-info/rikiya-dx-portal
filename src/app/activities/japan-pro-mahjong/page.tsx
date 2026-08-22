@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Trophy, Users, FileText } from "lucide-react";
+import GroupedPhotoGallery from "@/components/GroupedPhotoGallery";
+import { getJapanProMahjongPhotoGroups } from "@/data/japanProMahjongPhotos";
+import { ArrowLeft, Trophy, Users, FileText, Camera } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -10,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function JapanProMahjongPage() {
+    const photoGroups = getJapanProMahjongPhotoGroups();
+
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
             {/* ヘッダーはメインサイトと共通のものを使用 */}
@@ -51,6 +55,19 @@ export default function JapanProMahjongPage() {
                             </a>
                         </div>
                     </div>
+
+                    {/* 活動の様子（開催回別 写真スライドショー） */}
+                    {photoGroups.some((g) => g.photos.length > 0) && (
+                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-rose-50 rounded-lg text-rose-600">
+                                    <Camera className="w-6 h-6" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-800">活動の様子</h2>
+                            </div>
+                            <GroupedPhotoGallery groups={photoGroups} />
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         {/* 活動概要 */}
