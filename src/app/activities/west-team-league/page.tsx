@@ -134,9 +134,9 @@ export default function WestTeamLeaguePage() {
                                 {
                                     year: "2025-2026",
                                     results: [
-                                        { team: "チームひらりん", result: "ファイナルステージ進出", type: "advance" },
-                                        { team: "コータ軍団", result: "ファイナルステージ進出", type: "advance" },
-                                        { team: "たのま～", result: "ファイナルステージ進出", type: "advance" }
+                                        { team: "たのま～", result: "3位入賞", type: "podium" },
+                                        { team: "チームひらりん", result: "セミファイナル敗退", type: "semifinal" },
+                                        { team: "コータ軍団", result: "セミファイナル敗退", type: "semifinal" }
                                     ]
                                 },
                                 {
