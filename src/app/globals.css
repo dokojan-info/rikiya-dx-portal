@@ -59,3 +59,23 @@ body {
 ::view-transition-new(root) {
   z-index: 2;
 }
+/* ダブルエリミネーション: 対戦可能な試合の発光枠 */
+@keyframes de-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes de-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.35), 0 0 14px 2px rgba(99, 102, 241, 0.35); }
+  50% { box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.6), 0 0 30px 6px rgba(34, 211, 238, 0.45); }
+}
+.de-live {
+  background: linear-gradient(90deg, #6366f1, #22d3ee, #a855f7, #6366f1);
+  background-size: 200% 100%;
+  animation: de-flow 2.5s linear infinite, de-glow 2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .de-live { animation: none; box-shadow: 0 0 18px 3px rgba(99, 102, 241, 0.4); }
+}
+@media print {
+  .de-live { animation: none; box-shadow: none; background: #cbd5e1; }
+}
